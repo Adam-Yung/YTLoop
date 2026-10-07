@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+
+function play_video_linux() {
+    delay=$(( 30 + RANDOM % 21 ))
+    vid="$1"
+
+    if [[ "$vid" == *"?"* ]]; then
+        url="${vid}&autoplay=1"
+    else
+        url="${vid}?autoplay=1"
+    fi
+    
+    eval "${BROWSER} ${url}" &
+    browser_pid=$!
+    
+    printf "Playing video \"${vid}\"\n"
+    sleep ${delay}
+
+    win_id="$(xdotool search --pid ${browser_pid})"
+    if [[ -z $win_id ]]; then 
+        win_id=$(xdotool search --onlyvisible --class "$BROWSER" | tail -n 1)
+    fi
+
+    if [[ -z $win_id ]]; then
+        kill $browser_pid
+        wait $browser_pid
+        return
+    fi
+
+    xdotool key --window "$win_id" --clearmodifiers ctrl+w
+}
+
+play_video_mac() {
+    delay=$(( 30 + RANDOM % 21 ))
+    url="$1"
+osascript << EOF
+    tell application "System Events"
+        set frontApp to name of first application process whose frontmost is true
+    end tell
+
+    tell application "$BROWSER"
+        activate
+        open location "$url"
+    end tell
+
+    delay ${delay:-1}
+
+    tell application "$BROWSER"
+        if (count of windows) > 0 then
+            close active tab of front window
+        end if
+    end tell
+
+    tell application frontApp to activate
+EOF
+}
+
+worker() {
+    playlist_url="$PLAYLIST_URL"
+    vids="$(yt-dlp -i --flat-playlist --no-warnings --print url "${playlist_url}" | sort -R)"
+
+
+    for url in ${vids}; do
+        printf "Now playing: $url\n"
+        case "$(uname)" in
+            *Darwin*)
+                play_video_mac "$url"
+            ;;
+            *)
+                play_video_linux "$url"
+            ;;
+        esac
+    done
+}
+
+main() {
+    SCRIPT_DIR="$(dirname -- "${BASH_SOURCE[0]}")"
+    ENV="${SCRIPT_DIR}/../.env"
+    if [[ -f "${ENV}" ]]; then
+        source "${ENV}" 
+    fi
+
+    if [[ -z "$BROWSER" || -z "$PLAYLIST_URL" ]]; then
+        printf "Please configure .env\n"
+        return
+    fi
+
+    while true; do
+        worker
+    done
+}
+main
