@@ -11,9 +11,14 @@ function play_video_linux() {
         url="${vid}?autoplay=1"
     fi
     
+    front_window=$(xdotool getactivewindow)
+
     eval "${BROWSER} ${url}" &
     browser_pid=$!
     
+    sleep 1
+    wmctrl -r :ACTIVE: -e 0,0,0,600,400
+
     printf "Playing video \"${vid}\"\n"
     sleep ${delay}
 
@@ -29,6 +34,7 @@ function play_video_linux() {
     fi
 
     xdotool key --window "$win_id" --clearmodifiers ctrl+w
+    xdotool windowactivate "$front_window"
 }
 
 play_video_mac() {
@@ -42,6 +48,10 @@ osascript << EOF
     tell application "$BROWSER"
         activate
         open location "$url"
+
+        if (count of windows) > 0 then
+            set bounds of front window to {0, 0, 600, 400}
+        end if
     end tell
 
     delay ${delay:-1}
