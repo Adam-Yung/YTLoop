@@ -52,7 +52,8 @@ OpenEdgeBackground(url) {
         ; Restore and resize the window.
         WinRestore(target)
         WinMove(0, 0, 600, 400, target)
-
+        WinActivate(target)
+        
         ; Wait 40–60 seconds.
         Sleep(Random(40000, 60000))
 
