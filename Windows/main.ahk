@@ -22,10 +22,8 @@ OpenEdgeBackground(url) {
         for hwnd in WinGetList("ahk_exe msedge.exe")
             oldWindows[hwnd] := true
 
-        ; Launch Edge.
         Run('msedge.exe --new-window "' url '"')
 
-        ; Look for a new HWND, with a 10-second timeout.
         newEdgeHwnd := 0
         deadline := A_TickCount + 10000
 
@@ -43,19 +41,16 @@ OpenEdgeBackground(url) {
             Sleep(100)
         }
 
-        ; Exit if no new window was identified.
         if !newEdgeHwnd
             return
 
         target := "ahk_id " newEdgeHwnd
 
-        ; Restore and resize the window.
         WinRestore(target)
         WinMove(0, 0, 600, 400, target)
         WinActivate(target)
         
-        ; Wait 40–60 seconds.
-        Sleep(Random(40000, 60000))
+        Sleep(Random(env["WATCH_DURATION_BASE"], env["WATCH_DURATION_BASE"] + env["WATCH_DURATION_VARIANCE"]))
 
         ; Close only if the window still exists.
         if WinExist(target)

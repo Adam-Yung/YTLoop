@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
 
+function get_delay() {
+    echo $(( WATCH_DURATION_BASE + RANDOM % WATCH_DURATION_VARIANCE ))
+}
+
 function play_video_linux() {
-    delay=$(( 30 + RANDOM % 21 ))
     vid="$1"
     
     if ! command -v "$BROWSER"; then
@@ -24,7 +27,7 @@ function play_video_linux() {
     wmctrl -r :ACTIVE: -e 0,0,0,600,400
 
     printf "Playing video \"${vid}\"\n"
-    sleep ${delay}
+    sleep $(get_delay)
 
     win_id="$(xdotool search --pid ${browser_pid})"
     if [[ -z $win_id ]]; then 
@@ -44,7 +47,6 @@ function play_video_linux() {
 }
 
 play_video_mac() {
-    delay=$(( 30 + RANDOM % 21 ))
     url="$1"
     if ! osascript << EOF
     if not (application "$BROWSER" exists) then
@@ -64,7 +66,7 @@ play_video_mac() {
         end if
     end tell
 
-    delay ${delay:-1}
+    delay $(get_delay)
 
     tell application "$BROWSER"
         if (count of windows) > 0 then
@@ -112,7 +114,7 @@ main() {
 
     if [[ -z "$BROWSER" || -z "$PLAYLIST_URL" ]]; then
         printf "Please configure .env\n"
-        return
+        exit 1
     fi
 
     while true; do
