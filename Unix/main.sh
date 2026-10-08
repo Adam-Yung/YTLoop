@@ -4,6 +4,10 @@
 function play_video_linux() {
     delay=$(( 30 + RANDOM % 21 ))
     vid="$1"
+    
+    if ! command -v "$BROWSER"; then
+        return 1
+    fi
 
     if [[ "$vid" == *"?"* ]]; then
         url="${vid}&autoplay=1"
@@ -30,17 +34,23 @@ function play_video_linux() {
     if [[ -z $win_id ]]; then
         kill $browser_pid
         wait $browser_pid
-        return
+        return 0
     fi
 
     xdotool key --window "$win_id" --clearmodifiers ctrl+w
     xdotool windowactivate "$front_window"
+
+    return 0
 }
 
 play_video_mac() {
     delay=$(( 30 + RANDOM % 21 ))
     url="$1"
-osascript << EOF
+    if ! osascript << EOF
+    if not (application "$BROWSER" exists) then
+        error "Application '$BROWSER' not found" number 1
+    end if
+    
     tell application "System Events"
         set frontApp to name of first application process whose frontmost is true
     end tell
@@ -64,6 +74,11 @@ osascript << EOF
 
     tell application frontApp to activate
 EOF
+    then
+        return 1
+    else
+        return 0
+    fi
 }
 
 worker() {
@@ -81,6 +96,10 @@ worker() {
                 play_video_linux "$url"
             ;;
         esac
+
+        if [[ $? -ne 0 ]]; then
+            exit 1
+        fi
     done
 }
 
