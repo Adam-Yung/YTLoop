@@ -1,0 +1,18 @@
+.env.example
+  h_9dd936968f9973 1-2
+Unix/main.sh
+  h_9dd936968f9973 4-7,30,69,117
+Windows/main.ahk
+  h_9dd936968f9973 53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "f4369409befc13a317b79c34c457e506aca0657c",
+  "prompts": {},
+  "humans": {
+    "h_9dd936968f9973": {
+      "author": "Adam Yung <adyung@paloaltonetworks.com>"
+    }
+  }
+}
