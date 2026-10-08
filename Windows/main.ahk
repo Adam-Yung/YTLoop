@@ -14,49 +14,56 @@ env :=LoadEnv(A_ScriptDir "\.." "\.env")
  * 
  * @param url The website to open.
  */
-OpenEdgeBackground(url) {
-    activeHwnd := WinExist("A")
 
-    groupName := "OldEdgeWindows"
-    static knownHwnds := Map()
-    
-    existingEdgeWindows := WinGetList("ahk_exe msedge.exe")
-    for hwnd in existingEdgeWindows {
-        if !knownHwnds.Has(hwnd) {
-            GroupAdd(groupName, "ahk_id " hwnd)
-            knownHwnds[hwnd] := true
+OpenEdgeBackground(url) {
+    try {
+        oldWindows := Map()
+
+        for hwnd in WinGetList("ahk_exe msedge.exe")
+            oldWindows[hwnd] := true
+
+        ; Launch Edge.
+        Run('msedge.exe --new-window "' url '"')
+
+        ; Look for a new HWND, with a 10-second timeout.
+        newEdgeHwnd := 0
+        deadline := A_TickCount + 10000
+
+        while (A_TickCount < deadline) {
+            for hwnd in WinGetList("ahk_exe msedge.exe") {
+                if !oldWindows.Has(hwnd) {
+                    newEdgeHwnd := hwnd
+                    break
+                }
+            }
+
+            if newEdgeHwnd
+                break
+
+            Sleep(100)
         }
-    }
-    
-    Run('msedge.exe --new-window "' url '"')   ; Run new minimized Edge Window
-    
-    MaxWaitTimeOut := 10
-    newEdgeHwnd := WinWait("ahk_exe msedge.exe", , MaxWaitTimeOut, , "ahk_group " groupName)
-    
-    if (!newEdgeHwnd) {
+
+        ; Exit if no new window was identified.
+        if !newEdgeHwnd
+            return
+
+        target := "ahk_id " newEdgeHwnd
+
+        ; Restore and resize the window.
+        WinRestore(target)
+        WinMove(0, 0, 600, 400, target)
+
+        ; Wait 40–60 seconds.
+        Sleep(Random(40000, 60000))
+
+        ; Close only if the window still exists.
+        if WinExist(target)
+            WinClose(target)
+
+    } catch {
+        ; Silently return on any AHK exception.
         return
     }
-    knownHwnds[newEdgeHwnd] := true
-    GroupAdd(groupName, "ahk_id " newEdgeHwnd)
-    WinRestore("ahk_id " newEdgeHwnd)
-    WinMove(0, 0, 600, 400, "ahk_id " newEdgeHwnd)
-    
-    ; WinMinimize("ahk_id " newEdgeHwnd)
-    ; if (activeHwnd) {
-    ;     WinActivate("ahk_id " activeHwnd)
-    ; }
- 
-    CloseWindow() {
-        if WinExist("ahk_id " newEdgeHwnd) {
-            WinClose("ahk_id " newEdgeHwnd)
-        }
-    }
-       
-    delayMin := 40000
-    delayMax := 60000
-    delayMs := Random(delayMin, delayMax)
-    Sleep(delayMs)
-    CloseWindow
 }
 
 YuetYumUrl := env["PLAYLIST_URL"]
@@ -87,13 +94,17 @@ RetrieveYouTubePlaylist(url) {
 
 
 main() {
-    urls := RetrieveYouTubePlaylist(YuetYumUrl)
+    if (!YuetYumUrl) {
+        MsgBox("Please set .env", "Configuration Error")
+    }
+    
+    while true {
+        urls := RetrieveYouTubePlaylist(YuetYumUrl)
 
-    Loop urls.Length {
-        OpenEdgeBackground(urls[A_Index])
+        Loop urls.Length {
+            OpenEdgeBackground(urls[A_Index])
+        }
     }
 }
 
-while true {
-    main
-}
+main
