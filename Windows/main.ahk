@@ -50,7 +50,10 @@ OpenEdgeBackground(url) {
         WinMove(0, 0, 600, 400, target)
         WinActivate(target)
         
-        Sleep(Random(env["WATCH_DURATION_BASE"], env["WATCH_DURATION_BASE"] + env["WATCH_DURATION_VARIANCE"]))
+        base := (env["WATCH_DURATION_BASE"] + 0) * 1000
+        variance := (env["WATCH_DURATION_VARIANCE"] + 0) * 1000
+
+        Sleep(Random(base, base + variance))
 
         ; Close only if the window still exists.
         if WinExist(target)
