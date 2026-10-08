@@ -1,0 +1,14 @@
+auto-skip-ads.js
+  h_9dd936968f9973 2-52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "2c927117b8dbb81bc20bd1680996504f5c6375aa",
+  "prompts": {},
+  "humans": {
+    "h_9dd936968f9973": {
+      "author": "Adam Yung <adyung@paloaltonetworks.com>"
+    }
+  }
+}
