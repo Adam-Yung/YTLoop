@@ -1,0 +1,14 @@
+Unix/main.sh
+  h_9dd936968f9973 7-10,37,42-43,49-53,77-81,99-102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.24",
+  "base_commit_sha": "1bed1ca765100b770f0cdf41898ca4ccffeea4de",
+  "prompts": {},
+  "humans": {
+    "h_9dd936968f9973": {
+      "author": "Adam Yung <adyung@paloaltonetworks.com>"
+    }
+  }
+}
