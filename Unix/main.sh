@@ -48,6 +48,8 @@ function play_video_linux() {
 
 play_video_mac() {
     url="$1"
+    tab_current="$( [[ "$BROWSER" == "Safari" ]] && echo "current" || echo "active" )"
+
     if ! osascript << EOF
     if not (application "$BROWSER" exists) then
         error "Application '$BROWSER' not found" number 1
@@ -70,7 +72,7 @@ play_video_mac() {
 
     tell application "$BROWSER"
         if (count of windows) > 0 then
-            close active tab of front window
+            close ${tab_type} tab of front window
         end if
     end tell
 
