@@ -62,6 +62,8 @@ play_video_mac() {
     tell application "$BROWSER"
         activate
         open location "$url"
+        
+        delay 1
 
         if (count of windows) > 0 then
             set bounds of front window to {0, 0, 600, 400}
