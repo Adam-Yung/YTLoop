@@ -112,17 +112,28 @@ worker() {
 main() {
     SCRIPT_DIR="$(dirname -- "${BASH_SOURCE[0]}")"
     ENV="${SCRIPT_DIR}/../.env"
-    if [[ -f "${ENV}" ]]; then
-        source "${ENV}" 
+    LOG="${SCRIPT_DIR}/errors.log"
+
+    if [[ -f "$ENV" ]]; then
+        source "$ENV"
     fi
 
-    if [[ -z "$BROWSER" || -z "$PLAYLIST_URL" ]]; then
-        printf "Please configure .env\n"
-        exit 1
+    if [[ -z "${BROWSER:-}" || -z "${PLAYLIST_URL:-}" ]]; then
+        printf "Please configure .env\n" >&2
+        return 1
     fi
 
     while true; do
-        worker
+        if ( worker ) 2>>"$LOG"; then
+            : # Worker completed successfully
+        else
+            status=$?
+            printf '[%s] Worker failed with exit code %s\n' \
+                "$(date '+%F %T')" "$status" | tee -a "$LOG" >&2
+
+            sleep 2
+        fi
     done
 }
-main
+
+main "$@"
