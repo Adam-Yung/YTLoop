@@ -89,10 +89,10 @@ EOF
 
 worker() {
     playlist_url="$PLAYLIST_URL"
-    vids="$(yt-dlp -i --flat-playlist --no-warnings --print url "${playlist_url}" | sort -R)"
+    vids="$(yt-dlp -i --flat-playlist --no-warnings --print url "${playlist_url}")"
+    vids_shuffled="$(echo "$vids" | shuf)"
 
-
-    for url in ${vids}; do
+    for url in ${vids_shuffled}; do
         printf "Now playing: $url\n"
         case "$(uname)" in
             *Darwin*)
