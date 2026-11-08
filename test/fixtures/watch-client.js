@@ -28,7 +28,7 @@
   playBtn.addEventListener('click', e => { log.push({ t: 'play-click', trusted: e.isTrusted }); s.paused = !s.paused; });
   toggle.addEventListener('click', e => {
     log.push({ t: 'autonav-click', trusted: e.isTrusted });
-    toggle.setAttribute('aria-checked', String(toggle.getAttribute('aria-checked') !== 'true'));
+    if (!data.autonavStuck) toggle.setAttribute('aria-checked', String(toggle.getAttribute('aria-checked') !== 'true'));
   });
   skip.addEventListener('click', e => {
     log.push({ t: 'skip-click', trusted: e.isTrusted, ad: s.adIndex });
@@ -65,7 +65,7 @@
     } else {
       const due = breaks.find(b => !b.done && s.content >= b.at);
       if (due) { due.done = true; startAd(due.ads); }
-      else s.content = Math.min(data.duration, s.content + dt);
+      else if (data.stallAt == null || s.content < data.stallAt) s.content = Math.min(data.duration, s.content + dt);
       if (s.content >= data.duration) finish();
     }
     render();
@@ -76,7 +76,7 @@
     s.ended = true;
     log.push({ t: 'ended' });
     if (data.autoplayTo && toggle.getAttribute('aria-checked') === 'true') {
-      setTimeout(() => location.assign(`/watch?v=${data.autoplayTo}`), 300);
+      setTimeout(() => location.assign(`/watch?v=${data.autoplayTo}`), data.autoplayDelayMs ?? 300);
     }
   };
 

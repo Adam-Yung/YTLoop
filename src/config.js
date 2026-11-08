@@ -18,6 +18,8 @@ const DEFAULTS = {
   retryDelayMs: 15000,
   playlistRetryMs: 60000,
   botWaitMs: 600000,
+  wallCheckMs: 4000,
+  recommendationRetryMs: 2000,
   maxVideoFailures: 3,
   maxBrowserFailures: 2,
   chainMin: 10,

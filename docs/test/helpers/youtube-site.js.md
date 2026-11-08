@@ -16,6 +16,9 @@ Video: `{ id, title, channel, duration, related, breaks, layout, startPaused, au
 - `breaks`: `[{ at, ads: [{ length, skipAfter }] }]`. `at` is content seconds; `ads` is a pod played back to back; `skipAfter` is the ad second at which the Skip button appears (`null` for unskippable).
 - `autoplayTo`: video id YouTube would autoplay to after the end when the autonav toggle is on.
 - `skipCovered`: an overlay covers the Skip button so a real click is blocked.
+- `autoplayDelayMs`: delay before the autoplay switch (default 300).
+- `autonavStuck`: the autoplay toggle ignores clicks, so a switch cannot be prevented.
+- `stallAt`: content second at which playback freezes.
 - `timeScale`: media seconds per real second (default 20) so tests run fast.
 
 Routes: `/watch?v=ID`, `/@handle/videos`. Anything else is 404.

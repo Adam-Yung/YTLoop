@@ -23,4 +23,20 @@ async function launch(cfg, { headless = false } = {}) {
 const isClosedError = err =>
   /target.*closed|browser.*closed|context.*closed|connection.*closed|browser.*disconnected/i.test(String(err?.message || ''));
 
-module.exports = { launch, isClosedError };
+function createBrowser(cfg, opts) {
+  let handle = null;
+  const close = async () => {
+    try { await handle?.context.close(); } catch { /* Already disconnected. */ }
+    handle = null;
+  };
+  const page = async () => {
+    if (!handle || handle.page.isClosed()) {
+      await close();
+      handle = await launch(cfg, opts);
+    }
+    return handle.page;
+  };
+  return { page, close };
+}
+
+module.exports = { launch, createBrowser, isClosedError };
