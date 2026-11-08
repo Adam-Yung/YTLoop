@@ -8,6 +8,7 @@ const { fetchPlaylist } = require('../../src/playlist');
 const { createSession } = require('../../src/watch');
 const { runChain } = require('../../src/chain');
 const { capture, looksBlank } = require('../lib/ctx');
+const { screenState, wakeScreen, isAwake } = require('../lib/awake');
 const { regionStats } = require('../lib/regions');
 
 const BUDGET_MS = 8 * 60 * 1000;
@@ -32,6 +33,11 @@ module.exports = {
     const timer = setTimeout(() => abort.abort(), BUDGET_MS);
     const video = path.join(ctx.dir, 'watch.mov');
     const rec = capture.startRecording(video);
+    const incidents = [];
+    const watchdog = setInterval(async () => {
+      const state = await screenState();
+      if (!isAwake(state)) { incidents.push(new Date().toISOString()); await wakeScreen(); }
+    }, 15000);
     let result;
     try {
       const page = await browser.page();
@@ -40,10 +46,12 @@ module.exports = {
       await ctx.evidence(page, 'watch-end');
     } finally {
       clearTimeout(timer);
+      clearInterval(watchdog);
     }
     const recorded = await rec.stop();
     await browser.close();
     ctx.note('chain result:', JSON.stringify(result));
+    await ctx.check('watch.0', `no screensaver or lock appeared while recording (${incidents.length} incidents)`, async () => incidents.length === 0);
 
     const watching = lines.filter(l => l.startsWith('[video] Watching'));
     await ctx.check('watch.2', 'the first video was watched to the end (or the time budget ran out while playing)', async () => result.watched >= 1 || (result.reason === 'stopped' && watching.length >= 1));

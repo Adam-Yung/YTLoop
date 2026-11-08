@@ -4,6 +4,7 @@ Live and `manual` (run by name: `npm run verify:live watch`; minutes long, budge
 
 | Id | What |
 | --- | --- |
+| `watch.0` | no screensaver or lock appeared while recording (checked every 15 s; each incident also wakes the screen) |
 | `watch.1` | playlist fetched |
 | `watch.2` | the first video was watched to the end (or the budget ran out while it was playing) |
 | `watch.3` | autoplay turned off by the app (skipped when the profile already had it off) |
