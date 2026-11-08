@@ -3,6 +3,7 @@
   const video = document.querySelector('video.html5-main-video');
   const player = document.querySelector('#movie_player');
   const skip = document.querySelector('.ytp-skip-ad-button');
+  const bar = document.querySelector('#bar');
   const playBtn = document.querySelector('.ytp-play-button');
   const toggle = document.querySelector('.ytp-autonav-toggle-button');
   const log = [];
@@ -56,6 +57,7 @@
   const render = () => {
     const showSkip = s.mode === 'ad' && ad().skipAfter != null && s.adTime >= ad().skipAfter;
     skip.hidden = !showSkip;
+    bar.style.width = `${(s.content / data.duration) * 100}%`;
   };
 
   let last = performance.now();

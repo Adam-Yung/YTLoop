@@ -5,9 +5,9 @@
 const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 
-const ROOTS = ['src/', 'scripts/', 'test/', '.githooks/'];
+const ROOTS = ['src/', 'scripts/', 'test/', 'visual/', '.githooks/'];
 const ROOT_FILES = ['playwright.config.js'];
-const SKIP = ['test/fixtures/'];
+const SKIP = ['test/fixtures/', 'visual/results/'];
 
 const covered = file => !SKIP.some(s => file.startsWith(s)) &&
   (ROOT_FILES.includes(file) || ROOTS.some(r => file.startsWith(r)));

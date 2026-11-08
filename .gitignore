@@ -7,3 +7,5 @@ logs/
 test-results/
 playwright-report/
 .profile-live/
+visual/results/
+tmp/

@@ -1,15 +1,15 @@
 'use strict';
 
-// Test projects: unit (no browser), fixture (system Chrome vs fake YouTube pages), live (opt-in, LIVE=1).
+// Test projects: unit (no browser), fixture (Playwright Chromium vs fake YouTube pages), live (opt-in, LIVE=1).
 
 const { defineConfig } = require('@playwright/test');
 
-const chrome = { channel: 'chrome', headless: !process.env.HEADED, launchOptions: { args: ['--disable-gpu', '--disable-software-rasterizer'] } };
+const channel = process.env.BROWSER_CHANNEL === 'chrome' ? { channel: 'chrome' } : {};
+const chrome = { ...channel, headless: !process.env.HEADED };
 
 module.exports = defineConfig({
   timeout: 30000,
   fullyParallel: true,
-  retries: 2,
   reporter: [['list']],
   projects: [
     { name: 'unit', testDir: 'test/unit' },

@@ -10,17 +10,24 @@
   #related { margin-top: 380px }
   #related > * { display: block; height: 60px }
   #sidebar-spacer { height: 0 }
+  #movie_player.ad-showing { background: #c00 }
+  #movie_player .ytp-skip-ad-button { background: #fc0 }
+  #bar { position: absolute; left: 0; bottom: 0; height: 12px; width: 0; background: #2c2 }
+  like-button-view-model button[aria-pressed=true] { background: #06f; color: #fff }
+  #title { margin: 6px 4px; font-size: 22px }
 </style></head>
 <body>
 <ytd-app>
   {{MASTHEAD}}
   <div id="movie_player" class="html5-video-player">
     <video class="html5-main-video"></video>
+    <div id="bar"></div>
     <button class="ytp-play-button" aria-label="Play">Play</button>
     <button class="ytp-autonav-toggle-button" aria-checked="true" aria-label="Autoplay is on">Autoplay</button>
     <button class="ytp-skip-ad-button" hidden>Skip Ad</button>
     {{COVER}}
   </div>
+  <h1 id="title">{{TITLE}}</h1>
   <ytd-watch-metadata>
     <like-button-view-model><button aria-pressed="{{LIKE_PRESSED}}" style="display:block;width:80px;height:28px">Like</button></like-button-view-model>
     <div id="owner"><ytd-video-owner-renderer><ytd-channel-name><a href="{{CHANNEL_URL}}">{{CHANNEL_NAME}}</a></ytd-channel-name></ytd-video-owner-renderer></div>

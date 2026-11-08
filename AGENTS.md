@@ -11,6 +11,14 @@ Applies to every agent and contributor.
 - Design decisions go in `docs/decisions/` as short numbered notes.
 - `npm run lint` and the pre-commit hook check that mirror docs exist and are staged with their code.
 
+## Scratch files
+
+Never write to `/tmp` or the system temp dir (it triggers allowlist prompts for the owner). Use `<repo>/tmp/` (git-ignored; `test/helpers/tmp.js` has `tmpDir`/`removeDir`). Delete what you create there when you are done.
+
+## Visual verification
+
+Anything that changes what the browser does must also pass `npm run verify` (real screen checks). `npm run probe` checks the real YouTube DOM. See `docs/visual.md` and the `visual-verify` skill.
+
 ## Style
 
 See `docs/guidelines.md`. In short: minimal and readable, a multi-line comment only at the top of a file, all other explanation goes in `docs/`.

@@ -13,6 +13,7 @@ const DEFAULTS = {
   clickTimeoutMs: 2000,
   clickPauseMs: [300, 900],
   navigationTimeoutMs: 25000,
+  launchTimeoutMs: 30000,
   startupTimeoutMs: 60000,
   stallTimeoutMs: 120000,
   retryDelayMs: 15000,
@@ -35,12 +36,14 @@ const int = (value, fallback) => {
 function load(env = process.env, overrides = {}) {
   const chainMin = int(env.CHAIN_MIN, DEFAULTS.chainMin);
   const chainMax = Math.max(chainMin, int(env.CHAIN_MAX, DEFAULTS.chainMax));
+  const browserChannel = env.BROWSER_CHANNEL === 'chrome' ? 'chrome' : 'chromium';
   return {
     ...DEFAULTS,
+    browserChannel,
     playlistUrl: (env.PLAYLIST_URL || '').trim(),
     chainMin,
     chainMax,
-    profileDir: env.PROFILE_DIR || path.join(ROOT, '.profile'),
+    profileDir: env.PROFILE_DIR || path.join(ROOT, '.profile', browserChannel),
     logDir: env.LOG_DIR || path.join(ROOT, 'logs'),
     ...overrides,
   };

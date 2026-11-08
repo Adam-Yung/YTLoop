@@ -15,6 +15,10 @@
 - Update the doc in the same commit as the code. `npm run lint` and the pre-commit hook enforce that a doc exists and is staged with its code.
 - Decisions go in `docs/decisions/NNNN-title.md`: context, decision, consequences.
 
+## Scratch files
+
+Use `<repo>/tmp/`, never `/tmp` or `os.tmpdir()`. Remove files when done. Tests use `test/helpers/tmp.js`.
+
 ## Testing
 
 - Pure logic: `unit` project. Browser behavior against fake YouTube pages: `fixture` project. Real YouTube: `live` project, opt-in with `LIVE=1`.

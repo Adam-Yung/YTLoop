@@ -1,7 +1,8 @@
 # src/browser.js
 
-- `launch(cfg, { headless })`: `chromium.launchPersistentContext(cfg.profileDir)` with `channel: 'chrome'`, `viewport: null` (real window size), `--enable-automation` removed and `--disable-blink-features=AutomationControlled` added. Returns `{ context, page }` with default timeouts set. Headed by default; tests pass `headless: true`.
+- `launch(cfg, { headless })`: `chromium.launchPersistentContext(cfg.profileDir)`. Browser is Playwright's Chromium by default; `cfg.browserChannel === 'chrome'` uses installed Chrome (decision 0007). Options: `viewport: null` (real window size), `chromiumSandbox: true` (no `--no-sandbox` warning bar), `timeout: cfg.launchTimeoutMs` (a blocked browser fails instead of hanging at a blank page), `--enable-automation` removed, `--disable-blink-features=AutomationControlled` added, optional `cfg.recordVideoDir` for Playwright video. Returns `{ context, page }` with default timeouts set. Headed by default; tests pass `headless: true`.
 - `createBrowser(cfg, opts)`: lazy wrapper returning `{ page(), close() }`. `page()` launches Chrome when there is none or the page is closed; `close()` closes the context and forgets it so the next `page()` relaunches. The chain uses this for browser recovery.
+- `explainLaunchError(err, cfg)`: turns launch failures into actionable one-liners: the Chrome admin-policy block (`DevTools remote debugging is disallowed by the system admin`), a missing browser (`npm run setup`), or the first line of the original error.
 - `isClosedError(err)`: recognizes "target/browser/context closed" errors so callers relaunch.
 
 Do not run two instances on one profile directory; Chrome locks it. No stealth plugins (decision 0004).

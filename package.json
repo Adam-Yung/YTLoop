@@ -3,14 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "description": "Cross-platform Playwright YouTube same-channel watcher",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
+    "setup": "playwright install chromium",
     "start": "node src/main.js",
-    "probe": "node scripts/probe.js",
+    "probe": "node visual/run.js --live probe",
     "test": "playwright test --project=unit --project=fixture",
     "test:live": "LIVE=1 playwright test --project=live",
     "lint": "node scripts/check-style.js && node scripts/check-docs.js",
-    "prepare": "git config core.hooksPath .githooks || true"
+    "prepare": "git config core.hooksPath .githooks || true",
+    "verify": "node visual/run.js",
+    "verify:live": "node visual/run.js --live"
   },
   "dependencies": {
     "@playwright/test": "^1.50.0"

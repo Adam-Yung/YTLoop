@@ -3,10 +3,9 @@
 // Fixture tests for src/guard.js and the launch flags in src/browser.js.
 
 const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
 const { test, expect } = require('@playwright/test');
 const { createSite } = require('../helpers/youtube-site');
+const { tmpDir, removeDir } = require('../helpers/tmp');
 const { hasWall, waitForHuman, WallError } = require('../../src/guard');
 const { launch } = require('../../src/browser');
 const { load } = require('../../src/config');
@@ -40,13 +39,13 @@ test('an uncleared wall throws WallError and nothing is clicked', async ({ conte
 });
 
 test('launch hides automation flags and keeps a persistent profile', async () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ytloop-profile-'));
+  const dir = tmpDir('profile');
   const { context, page } = await launch(load({}, { profileDir: dir }), { headless: true });
   try {
     expect(await page.evaluate(() => navigator.webdriver)).toBe(false);
     expect(fs.readdirSync(dir).length).toBeGreaterThan(0);
   } finally {
     await context.close();
-    fs.rmSync(dir, { recursive: true, force: true });
+    removeDir(dir);
   }
 });

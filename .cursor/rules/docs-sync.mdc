@@ -9,6 +9,8 @@ alwaysApply: true
 - Before editing a code file, read its mirrored doc. After editing, fix stale parts and add missing information in the same commit.
 - New code file needs a new doc. Deleted code file needs its doc deleted.
 - Code style: minimal and readable. Multi-line comments only at the top of a file. Explanations belong in `docs/`.
+- Scratch files go in `<repo>/tmp/` (never `/tmp`); delete them when done.
+- Behavior changes also need `npm run verify` to pass (see `docs/visual.md`).
 - Run `npm run lint` and `npm test` before committing.
 
 Full rules: `AGENTS.md` and `docs/guidelines.md`.
