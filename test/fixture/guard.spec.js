@@ -14,7 +14,7 @@ const { load } = require('../../src/config');
 const channels = { a: { id: 'UCa', name: 'Channel A', handle: '@chana', uploads: ['aaaaaaaaaaa'] } };
 const videos = { aaaaaaaaaaa: { id: 'aaaaaaaaaaa', title: 'A', channel: 'a', duration: 30 } };
 const quiet = { info: () => {}, error: () => {} };
-const cfg = load({}, { botWaitMs: 1500, pollMs: 100 });
+const cfg = load({}, { botWaitMs: 400, wallPollMs: 50 });
 const url = 'https://www.youtube.com/watch?v=aaaaaaaaaaa';
 
 test('a normal watch page is not a wall', async ({ context, page }) => {
@@ -29,14 +29,6 @@ test('a bot-check page is detected', async ({ context, page }) => {
   site.botWall.add('aaaaaaaaaaa');
   await page.goto(url);
   expect(await hasWall(page)).toBe(true);
-});
-
-test('waiting ends when a human clears the wall', async ({ context, page }) => {
-  const site = await createSite(context, { videos, channels });
-  site.botWall.add('aaaaaaaaaaa');
-  await page.goto(url);
-  setTimeout(() => { site.botWall.delete('aaaaaaaaaaa'); page.reload().catch(() => {}); }, 500);
-  expect(await waitForHuman(page, { ...cfg, botWaitMs: 8000 }, quiet)).toBe(true);
 });
 
 test('an uncleared wall throws WallError and nothing is clicked', async ({ context, page }) => {

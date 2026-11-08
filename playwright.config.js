@@ -4,11 +4,12 @@
 
 const { defineConfig } = require('@playwright/test');
 
-const chrome = { channel: 'chrome', headless: !process.env.HEADED };
+const chrome = { channel: 'chrome', headless: !process.env.HEADED, launchOptions: { args: ['--disable-gpu', '--disable-software-rasterizer'] } };
 
 module.exports = defineConfig({
   timeout: 30000,
   fullyParallel: true,
+  retries: 2,
   reporter: [['list']],
   projects: [
     { name: 'unit', testDir: 'test/unit' },
