@@ -69,8 +69,8 @@ async function watchVideo(page, id, session, ctx, { fresh = false, last = false 
     if (!initialized && media.ready >= 2 && media.duration > 0) {
       initialized = true;
       lastProgressAt = now;
-      await disableAutonav(page, ctx);
-    } else if (now - lastAutonavAt > 10000) {
+    }
+    if (initialized && now - lastAutonavAt > cfg.autonavCheckMs) {
       lastAutonavAt = now;
       await disableAutonav(page, ctx);
     }

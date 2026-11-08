@@ -10,4 +10,4 @@ The only file allowed to contain YouTube selectors or wall-detection patterns (`
 - `channelGrid`: card and link selectors for a channel's Videos page.
 - `wall`: `text` regex for bot-check pages, `selectors` for CAPTCHA and consent elements, `hosts` for consent or sign-in redirects.
 
-The new-layout selectors are best guesses until verified with `npm run probe`.
+The new layout was verified against the real page on 2026-11-08: cards use `ytLockupViewModelContentImage` and `ytLockupMetadataViewModelTitle` links, have no channel link, and show the channel name in the first `ytContentMetadataViewModelMetadataText` span, so same-channel matching relies on names there. (An earlier guess with `-wiz__` class names matched nothing, which made every video fall back to the channel page.)

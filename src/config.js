@@ -22,6 +22,7 @@ const DEFAULTS = {
   wallCheckMs: 4000,
   wallPollMs: 2000,
   recommendationRetryMs: 2000,
+  autonavCheckMs: 10000,
   maxVideoFailures: 3,
   maxBrowserFailures: 2,
   chainMin: 10,

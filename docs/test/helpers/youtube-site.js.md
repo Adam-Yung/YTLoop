@@ -12,7 +12,7 @@ Channel: `{ id, name, handle, uploads: [videoIds] }`.
 Video: `{ id, title, channel, duration, related, breaks, layout, startPaused, autoplayTo, skipCovered, timeScale }`.
 
 - `related`: video ids shown in the sidebar, in order.
-- `layout`: `'old'` (default, `ytd-compact-video-renderer`) or `'new'` (`yt-lockup-view-model`).
+- `layout`: `'old'` (default, `ytd-compact-video-renderer`) or `'new'` (`yt-lockup-view-model` with the real `ytLockup*` classes; the channel name is the first `ytContentMetadataViewModelMetadataText` span and the card has no channel link, like the real page).
 - `breaks`: `[{ at, ads: [{ length, skipAfter }] }]`. `at` is content seconds; `ads` is a pod played back to back; `skipAfter` is the ad second at which the Skip button appears (`null` for unskippable).
 - `autoplayTo`: video id YouTube would autoplay to after the end when the autonav toggle is on.
 - `skipCovered`: an overlay covers the Skip button so a real click is blocked.

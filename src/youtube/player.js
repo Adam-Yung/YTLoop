@@ -4,6 +4,7 @@
 
 const S = require('./selectors');
 const { humanClick } = require('../human');
+const { sleep } = require('../sleep');
 
 const readMedia = ({ selector, playerSelector }) => {
   const v = document.querySelector(selector);
@@ -51,10 +52,15 @@ async function disableAutonav(page, ctx) {
   try {
     const toggle = page.locator(S.autonavToggle).first();
     if (!(await toggle.count())) return false;
-    const on = await toggle.evaluate(el =>
+    const isOn = () => toggle.evaluate(el =>
       (el.getAttribute('aria-checked') || el.querySelector('[aria-checked]')?.getAttribute('aria-checked')) === 'true');
-    if (!on) return false;
+    if (!(await isOn())) return false;
     await humanClick(page, toggle, ctx.cfg, ctx.signal);
+    for (let waited = 0; waited < ctx.cfg.clickTimeoutMs && (await isOn()); waited += 100) await sleep(100, ctx.signal);
+    if (await isOn()) {
+      ctx.log.info('[player] Autoplay toggle did not turn off; will check again');
+      return false;
+    }
     ctx.log.info('[player] Turned autoplay off');
     return true;
   } catch {

@@ -29,9 +29,9 @@ module.exports = {
   ].join(', '),
   related: {
     cards: '#related ytd-compact-video-renderer, ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer, #related yt-lockup-view-model, ytd-watch-next-secondary-results-renderer yt-lockup-view-model',
-    link: 'a#video-title[href*="watch"], a#thumbnail[href*="watch"], a.yt-lockup-metadata-view-model-wiz__title[href*="watch"], a.yt-lockup-view-model-wiz__content-image[href*="watch"], a[href*="/watch?v="]',
+    link: 'a#video-title[href*="watch"], a#thumbnail[href*="watch"], a.ytLockupMetadataViewModelTitle[href*="watch"], a.ytLockupViewModelContentImage[href*="watch"], a[href*="/watch?v="]',
     channelLink: 'ytd-channel-name a[href], #channel-name a[href], a[href^="/@"], a[href*="/channel/"]',
-    channelText: 'ytd-channel-name, #channel-name, .yt-content-metadata-view-model-wiz__metadata-text',
+    channelText: 'ytd-channel-name, #channel-name, .ytContentMetadataViewModelMetadataText',
   },
   channelGrid: {
     cards: 'ytd-rich-grid-media, ytd-grid-video-renderer, ytd-video-renderer, yt-lockup-view-model',

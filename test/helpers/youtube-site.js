@@ -13,9 +13,10 @@ const fill = (tpl, map) => Object.entries(map).reduce((t, [k, v]) => t.split(`{{
 const oldCard = (v, channel) => `<ytd-compact-video-renderer><a id="thumbnail" href="/watch?v=${v.id}">thumb</a>` +
   `<a id="video-title" href="/watch?v=${v.id}">${esc(v.title)}</a><ytd-channel-name id="channel-name"><div>${esc(channel.name)}</div></ytd-channel-name></ytd-compact-video-renderer>`;
 
-const newCard = (v, channel) => `<yt-lockup-view-model><a class="yt-lockup-view-model-wiz__content-image" href="/watch?v=${v.id}">thumb</a>` +
-  `<a class="yt-lockup-metadata-view-model-wiz__title" href="/watch?v=${v.id}">${esc(v.title)}</a>` +
-  `<div class="yt-content-metadata-view-model-wiz__metadata-text">${esc(channel.name)}</div></yt-lockup-view-model>`;
+const newCard = (v, channel) => `<yt-lockup-view-model class="lockup"><div class="ytLockupViewModelHost"><a class="ytLockupViewModelContentImage" href="/watch?v=${v.id}">thumb</a>` +
+  `<div class="ytLockupViewModelMetadata"><h3><a class="ytLockupMetadataViewModelTitle" href="/watch?v=${v.id}">${esc(v.title)}</a></h3>` +
+  `<div class="ytContentMetadataViewModelMetadataRow"><span class="ytContentMetadataViewModelMetadataText">${esc(channel.name)}</span></div>` +
+  `<div class="ytContentMetadataViewModelMetadataRow"><span class="ytContentMetadataViewModelMetadataText">595 views</span></div></div></div></yt-lockup-view-model>`;
 
 const gridItem = v => `<ytd-rich-grid-media><a id="thumbnail" href="/watch?v=${v.id}">thumb</a>` +
   `<a id="video-title-link" href="/watch?v=${v.id}">${esc(v.title)}</a></ytd-rich-grid-media>`;

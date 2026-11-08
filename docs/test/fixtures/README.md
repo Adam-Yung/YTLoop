@@ -7,4 +7,4 @@ Static pieces used by `test/helpers/youtube-site.js`. They are not code, so each
 - `channel.html`: channel Videos page with `ytd-rich-grid-media` items.
 - `bot-wall.html`: "Sign in to confirm you're not a bot" page.
 
-The markup is a best guess at YouTube's DOM. Real YouTube can differ; `npm run probe` checks the real selectors.
+The markup follows the real YouTube DOM observed on 2026-11-08 (old and new sidebar layouts, `ytLockup*` class names). Real YouTube changes over time: `npm run probe` checks the real selectors, and `npm run verify:live watch` checks the real chain.

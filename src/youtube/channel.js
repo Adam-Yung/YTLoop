@@ -70,6 +70,7 @@ async function clickToVideo(page, link, id, ctx) {
   try {
     await humanClick(page, link, ctx.cfg, ctx.signal);
     await page.waitForURL(u => videoId(u.toString()) === id, { timeout: 6000 });
+    ctx.log.info('[next] Clicked into', id);
     return true;
   } catch (err) {
     ctx.log.info('[next] Click failed, opening the same video by URL:', err.message.split('\n')[0]);
