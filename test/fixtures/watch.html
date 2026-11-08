@@ -1,0 +1,30 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>{{TITLE}}</title>
+<style>
+  body { font: 14px sans-serif; margin: 0 }
+  #movie_player { position: relative; width: 640px; height: 360px; background: #222 }
+  #movie_player button { display: block; width: 120px; height: 28px; margin: 4px }
+  #movie_player [hidden] { display: none }
+  .cover { position: absolute; left: 0; top: 0; width: 640px; height: 360px }
+  #related a, ytd-channel-name a, #owner a { display: block; height: 22px }
+  #related { margin-top: 380px }
+  #related > * { display: block; height: 60px }
+  #sidebar-spacer { height: 0 }
+</style></head>
+<body>
+<ytd-app>
+  <div id="movie_player" class="html5-video-player">
+    <video class="html5-main-video"></video>
+    <button class="ytp-play-button" aria-label="Play">Play</button>
+    <button class="ytp-autonav-toggle-button" aria-checked="true" aria-label="Autoplay is on">Autoplay</button>
+    <button class="ytp-skip-ad-button" hidden>Skip Ad</button>
+    {{COVER}}
+  </div>
+  <ytd-watch-metadata>
+    <div id="owner"><ytd-video-owner-renderer><ytd-channel-name><a href="{{CHANNEL_URL}}">{{CHANNEL_NAME}}</a></ytd-channel-name></ytd-video-owner-renderer></div>
+  </ytd-watch-metadata>
+  <div id="related">{{RELATED}}</div>
+</ytd-app>
+<script>window.ytInitialPlayerResponse = {{PLAYER_RESPONSE}}; window.__DATA__ = {{DATA}};</script>
+<script>{{CLIENT}}</script>
+</body></html>
