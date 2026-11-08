@@ -11,7 +11,6 @@
     "start": "node src/main.js",
     "probe": "node visual/run.js --live probe",
     "test": "playwright test --project=unit --project=fixture",
-    "test:live": "LIVE=1 playwright test --project=live",
     "lint": "node scripts/check-style.js && node scripts/check-docs.js",
     "prepare": "git config core.hooksPath .githooks || true",
     "verify": "node visual/run.js",

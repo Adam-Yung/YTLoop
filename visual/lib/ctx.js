@@ -4,7 +4,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const { load } = require('../../src/config');
+const { load, loadEnvFile } = require('../../src/config');
 const { createLog } = require('../../src/log');
 const { launch } = require('../../src/browser');
 const { createSite } = require('../../test/helpers/youtube-site');
@@ -51,7 +51,8 @@ function createContext({ dir, live, resultsFile }) {
   };
 
   const cleanup = () => removeDir(cfg.profileDir);
-  return { dir, live, cfg, log, rows, check, skip, note, record, evidence, sleep, until, cleanup };
+  const liveCfg = () => { loadEnvFile(); return load(process.env, { logDir: path.join(dir, 'logs') }); };
+  return { dir, live, cfg, liveCfg, log, rows, check, skip, note, record, evidence, sleep, until, cleanup };
 }
 
 async function openFake(ctx, { videos, channels, timeScale }) {

@@ -1,14 +1,15 @@
 # playwright.config.js
 
-Defines three test projects:
+Defines two test projects (`npm test` runs both):
 
-| Project | Dir | Browser | Run with |
-| --- | --- | --- | --- |
-| `unit` | `test/unit` | none | `npm test` |
-| `fixture` | `test/fixture` | Playwright Chromium, headless | `npm test` |
-| `live` | `test/live` | Playwright Chromium, headed, real YouTube | `npm run test:live` (sets `LIVE=1`) |
+| Project | Dir | Browser |
+| --- | --- | --- |
+| `unit` | `test/unit` | none |
+| `fixture` | `test/fixture` | Playwright Chromium, headless, against the fake YouTube |
 
-Set `BROWSER_CHANNEL=chrome` to run against installed Chrome instead (only possible where Chrome is not admin-locked). Set `HEADED=1` to watch fixture tests in a visible Chrome. Fixture tests run in parallel; the live project runs serially with a 5 minute timeout.
+Real-screen checks and live YouTube checks are not Playwright Test projects; they are the scenarios in `visual/` (`docs/visual.md`).
+
+Set `BROWSER_CHANNEL=chrome` to run against installed Chrome instead (only possible where Chrome is not admin-locked). Set `HEADED=1` to watch fixture tests in a visible browser. Tests run in parallel.
 
 ## Stability
 

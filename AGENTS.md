@@ -4,7 +4,7 @@ Applies to every agent and contributor.
 
 ## Docs must stay in sync with code
 
-- Documentation lives in `docs/` and mirrors the code path: `src/watch.js` is documented in `docs/src/watch.js.md`, `scripts/probe.js` in `docs/scripts/probe.js.md`.
+- Documentation lives in `docs/` and mirrors the code path: `src/watch.js` is documented in `docs/src/watch.js.md`, `scripts/check-docs.js` in `docs/scripts/check-docs.js.md`.
 - Before editing any code file, read its mirrored doc.
 - After editing, update the doc in the same commit: fix stale statements and add anything new (behavior, config, edge cases, decisions).
 - New code file means new doc file. Deleted code file means deleted doc file.
