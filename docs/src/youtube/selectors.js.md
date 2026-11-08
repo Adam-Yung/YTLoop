@@ -4,6 +4,7 @@ The only file allowed to contain YouTube selectors or wall-detection patterns (`
 
 - `player`, `video`, `playButton`, `autonavToggle`: the player and its controls.
 - `skip`: a comma list of Skip Ad button selectors, all inside `#movie_player` so unrelated "Skip" buttons are never matched.
+- `like`: the Like button inside the watch metadata; only matches buttons that carry `aria-pressed`. `signedOut`: masthead sign-in link, meaning likes are skipped.
 - `ownerLink`: the channel link under the video title.
 - `related`: sidebar cards, with old (`ytd-compact-video-renderer`) and new (`yt-lockup-view-model`) layouts, plus the title link, channel link and channel text selectors.
 - `channelGrid`: card and link selectors for a channel's Videos page.

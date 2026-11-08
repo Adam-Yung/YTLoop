@@ -3,7 +3,7 @@
 // Watches one video: skips ads every poll, guards against walls and stalls, and leaves via a same-channel recommendation.
 
 const { videoId, watchUrl } = require('./youtube/url');
-const { mediaState, createSkipper, disableAutonav, resumeIfPaused } = require('./youtube/player');
+const { mediaState, createSkipper, disableAutonav, likeIfNeeded, resumeIfPaused } = require('./youtube/player');
 const { readOwner, listRelated, pickSame, followRelated } = require('./youtube/channel');
 const { waitForHuman } = require('./guard');
 const { sleep } = require('./sleep');
@@ -26,7 +26,7 @@ async function watchVideo(page, id, session, ctx, { fresh = false, last = false 
 
   const startedAt = Date.now();
   let lastProgressAt = startedAt, lastPosition = -1, adStartedAt = 0, wasAd = false;
-  let initialized = false, lastWallAt = startedAt, lastOwnerAt = 0, lastAutonavAt = 0, lastPlayAt = 0, lastRecoAt = 0;
+  let initialized = false, likeTried = false, lastWallAt = startedAt, lastOwnerAt = 0, lastAutonavAt = 0, lastPlayAt = 0, lastRecoAt = 0;
 
   while (!signal.aborted) {
     const now = Date.now();
@@ -90,6 +90,10 @@ async function watchVideo(page, id, session, ctx, { fresh = false, last = false 
 
     const left = media.duration - media.current;
     const played = media.current >= Math.min(5, media.duration / 2);
+    if (initialized && played && !likeTried) {
+      likeTried = true;
+      await likeIfNeeded(page, ctx);
+    }
     if (!last && initialized && played && session.owner?.name && left >= 0 && left <= cfg.endWindowSeconds && now - lastRecoAt > cfg.recommendationRetryMs) {
       lastRecoAt = now;
       const next = pickSame(await listRelated(page).catch(() => []), session.owner, session.visited, id);

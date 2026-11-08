@@ -16,6 +16,12 @@ module.exports = {
     '#movie_player button[aria-label="Skip Ads"]',
     '#movie_player button[title="Skip Ad"]',
   ].join(', '),
+  like: [
+    'ytd-watch-metadata like-button-view-model button[aria-pressed]',
+    'ytd-watch-metadata ytd-segmented-like-dislike-button-renderer #segmented-like-button button[aria-pressed]',
+    'ytd-watch-metadata segmented-like-dislike-button-view-model like-button-view-model button[aria-pressed]',
+  ].join(', '),
+  signedOut: 'ytd-masthead a[href*="accounts.google.com/ServiceLogin"], ytd-masthead ytd-button-renderer a[href*="ServiceLogin"]',
   ownerLink: [
     'ytd-watch-metadata #owner ytd-channel-name a[href]',
     'ytd-video-owner-renderer ytd-channel-name a[href]',

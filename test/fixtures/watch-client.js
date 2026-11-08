@@ -30,6 +30,11 @@
     log.push({ t: 'autonav-click', trusted: e.isTrusted });
     if (!data.autonavStuck) toggle.setAttribute('aria-checked', String(toggle.getAttribute('aria-checked') !== 'true'));
   });
+  const like = document.querySelector('like-button-view-model button');
+  like.addEventListener('click', e => {
+    log.push({ t: 'like-click', trusted: e.isTrusted, was: like.getAttribute('aria-pressed') });
+    like.setAttribute('aria-pressed', String(like.getAttribute('aria-pressed') !== 'true'));
+  });
   skip.addEventListener('click', e => {
     log.push({ t: 'skip-click', trusted: e.isTrusted, ad: s.adIndex });
     if (s.mode === 'ad') endAd();

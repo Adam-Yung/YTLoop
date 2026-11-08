@@ -8,4 +8,5 @@ Covers `src/youtube/player.js` against the fake site:
 - Unskippable ad: no click, no tampering, ad plays out.
 - Full ad plus content run: zero `tamper` events (no seek, mute or speed change).
 - Autoplay toggle: switched off once, second call does nothing.
+- Like: unliked video gets one trusted click and a second call does nothing; already liked or signed out gets no click.
 - Paused video: resumed by a trusted click.

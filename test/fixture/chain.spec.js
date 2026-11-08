@@ -84,3 +84,12 @@ test('aborting stops the chain promptly', async ({ context, page }) => {
   expect(result.reason).toBe('stopped');
   expect(site.visits.length).toBeLessThan(3);
 });
+
+test('the last video of the chain is liked once', async ({ context, page }) => {
+  const { site } = await run({ context, page }, {
+    a1: { related: [ids.a2] }, a2: { liked: true, related: [ids.a3] },
+  }, { length: 3 });
+  const likes = await page.evaluate(() => window.__yt.log.filter(l => l.t === 'like-click').length);
+  expect(site.visits).toHaveLength(3);
+  expect(likes).toBe(1);
+});

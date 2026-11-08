@@ -62,6 +62,21 @@ async function disableAutonav(page, ctx) {
   }
 }
 
+async function likeIfNeeded(page, ctx) {
+  try {
+    if (await page.locator(S.signedOut).count()) return false;
+    const like = page.locator(S.like).first();
+    if (!(await like.isVisible())) return false;
+    if ((await like.getAttribute('aria-pressed')) !== 'false') return false;
+    await humanClick(page, like, ctx.cfg, ctx.signal);
+    ctx.log.info('[like] Liked the video');
+    return true;
+  } catch (err) {
+    ctx.log.info('[like] Could not like:', err.message.split('\n')[0]);
+    return false;
+  }
+}
+
 async function resumeIfPaused(page, ctx) {
   try {
     const play = page.locator(S.playButton).first();
@@ -74,4 +89,4 @@ async function resumeIfPaused(page, ctx) {
   }
 }
 
-module.exports = { mediaState, createSkipper, disableAutonav, resumeIfPaused };
+module.exports = { mediaState, createSkipper, disableAutonav, likeIfNeeded, resumeIfPaused };

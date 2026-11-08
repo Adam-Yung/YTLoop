@@ -8,4 +8,5 @@ End-to-end tests of `watchVideo` and `runChain` on the fake site with scaled tim
 - Stalled playback: abandoned for another upload.
 - Missing video: three consecutive failures end the chain with `failures`.
 - Bot wall: chain ends with `wall`, no extra navigation.
+- Like: the last video of a chain is liked exactly once.
 - Abort: chain returns `stopped` promptly.

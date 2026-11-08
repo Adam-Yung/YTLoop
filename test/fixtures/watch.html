@@ -13,6 +13,7 @@
 </style></head>
 <body>
 <ytd-app>
+  {{MASTHEAD}}
   <div id="movie_player" class="html5-video-player">
     <video class="html5-main-video"></video>
     <button class="ytp-play-button" aria-label="Play">Play</button>
@@ -21,6 +22,7 @@
     {{COVER}}
   </div>
   <ytd-watch-metadata>
+    <like-button-view-model><button aria-pressed="{{LIKE_PRESSED}}" style="display:block;width:80px;height:28px">Like</button></like-button-view-model>
     <div id="owner"><ytd-video-owner-renderer><ytd-channel-name><a href="{{CHANNEL_URL}}">{{CHANNEL_NAME}}</a></ytd-channel-name></ytd-video-owner-renderer></div>
   </ytd-watch-metadata>
   <div id="related">{{RELATED}}</div>

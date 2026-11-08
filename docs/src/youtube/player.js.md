@@ -5,6 +5,7 @@ Player actions. `ctx` is `{ cfg, log, signal }`.
 - `mediaState(page)`: `{ ad, current, duration, paused, ended, ready }` for the main video, or `null` when no player. `ad` is true when `#movie_player` has `ad-showing` or `ad-interrupting`. Read-only.
 - `createSkipper(ctx)` returns `skipIfAvailable(page)`. It looks at every `selectors.skip` match (max 8), and clicks the first one that is visible, enabled and not inside `aria-hidden`, using `humanClick`. Returns true when a click happened. A `skipCooldownMs` guard stops double clicks on one button. A click that Playwright rejects (covered, detached) is logged and retried on the next poll. Called each `pollMs`, so ad pods and mid-rolls are handled the same way as the first ad.
 - `disableAutonav(page, ctx)`: clicks the autoplay toggle only when it reports `aria-checked="true"`. Returns true when it clicked.
+- `likeIfNeeded(page, ctx)`: clicks the Like button only when it is visible and `aria-pressed` is exactly `"false"`. Already liked (`"true"`), unknown state, missing button, or a signed-out masthead sign-in link all mean no click, so a video can never be unliked by accident. Returns true when it clicked.
 - `resumeIfPaused(page, ctx)`: clicks the visible Play button.
 
 Never done here, by design (decision 0003): seeking, muting, `playbackRate`, hiding or blocking ads.

@@ -18,6 +18,7 @@ async function report(page) {
     video: S.video,
     playButton: S.playButton,
     autonavToggle: S.autonavToggle,
+    likeButton: S.like,
     ownerLink: S.ownerLink,
     relatedCards: S.related.cards,
     relatedLinks: `${S.related.cards} >> ${S.related.link}`,

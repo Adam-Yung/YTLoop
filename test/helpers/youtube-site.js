@@ -31,7 +31,9 @@ function createSite(context, { videos, channels, timeScale = 20 }) {
     const related = (v.related || []).map(id => card(byId(id), channelOf(byId(id)))).join('');
     const data = { duration: v.duration, breaks: v.breaks, startPaused: v.startPaused, autoplayTo: v.autoplayTo, autoplayDelayMs: v.autoplayDelayMs, autonavStuck: v.autonavStuck, stallAt: v.stallAt, timeScale: v.timeScale || timeScale };
     const cover = v.skipCovered ? '<div class="cover"></div>' : '';
+    const masthead = v.signedOut ? '<ytd-masthead><a href="https://accounts.google.com/ServiceLogin?x=1">Sign in</a></ytd-masthead>' : '';
     return fill(read('watch.html'), {
+      MASTHEAD: masthead, LIKE_PRESSED: v.liked ? 'true' : 'false',
       TITLE: esc(v.title), COVER: cover, CHANNEL_URL: `/${ch.handle}`, CHANNEL_NAME: esc(ch.name), RELATED: related,
       PLAYER_RESPONSE: JSON.stringify({ videoDetails: { author: ch.name, channelId: ch.id } }),
       DATA: JSON.stringify(data), CLIENT: read('watch-client.js'),

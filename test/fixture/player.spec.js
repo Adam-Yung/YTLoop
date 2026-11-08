@@ -5,7 +5,7 @@
 const { test, expect } = require('@playwright/test');
 const { createSite } = require('../helpers/youtube-site');
 const { makeCtx, until } = require('../helpers/ctx');
-const { mediaState, createSkipper, disableAutonav, resumeIfPaused } = require('../../src/youtube/player');
+const { mediaState, createSkipper, disableAutonav, likeIfNeeded, resumeIfPaused } = require('../../src/youtube/player');
 
 const channels = { a: { id: 'UCa', name: 'Channel A', handle: '@chana', uploads: ['aaaaaaaaaaa'] } };
 const one = extra => ({ aaaaaaaaaaa: { id: 'aaaaaaaaaaa', title: 'A', channel: 'a', duration: 20, ...extra } });
@@ -79,4 +79,24 @@ test('a paused video is resumed with a real click', async ({ context, page }) =>
   expect(await resumeIfPaused(page, makeCtx())).toBe(true);
   expect(await until(async () => !(await mediaState(page)).paused)).toBe(true);
   expect(kinds(await logOf(page), 'play-click')).toEqual([expect.objectContaining({ trusted: true })]);
+});
+
+test('an unliked video is liked once with a trusted click', async ({ context, page }) => {
+  await open(context, page, {});
+  const ctx = makeCtx();
+  expect(await likeIfNeeded(page, ctx)).toBe(true);
+  expect(await likeIfNeeded(page, ctx)).toBe(false);
+  expect(kinds(await logOf(page), 'like-click')).toEqual([expect.objectContaining({ trusted: true, was: 'false' })]);
+});
+
+test('an already liked video is never clicked, so it cannot be unliked', async ({ context, page }) => {
+  await open(context, page, { liked: true });
+  expect(await likeIfNeeded(page, makeCtx())).toBe(false);
+  expect(kinds(await logOf(page), 'like-click')).toHaveLength(0);
+});
+
+test('when signed out nothing is clicked', async ({ context, page }) => {
+  await open(context, page, { signedOut: true });
+  expect(await likeIfNeeded(page, makeCtx())).toBe(false);
+  expect(kinds(await logOf(page), 'like-click')).toHaveLength(0);
 });
