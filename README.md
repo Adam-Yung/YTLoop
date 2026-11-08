@@ -1,6 +1,6 @@
 # YTLoop
 
-Plays a YouTube playlist in real Chrome using Playwright. For each playlist entry (last to first) it follows 10 to 20 videos from the same channel, clicking Skip Ad buttons like a person would and never touching the ad itself.
+Plays a YouTube playlist in real Chrome using Playwright. For each playlist entry (last to first) it follows 10 to 20 videos from the same channel, clicking Skip Ad buttons like a person would and never touching the ad itself. Videos that are not liked yet get liked once.
 
 Runs the same on macOS, Windows and Ubuntu. See `docs/platforms.md` for setup.
 
