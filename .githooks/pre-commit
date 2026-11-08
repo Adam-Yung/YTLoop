@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Runs repo checks before every commit: style, then docs sync for staged files.
+set -e
+node scripts/check-style.js
+node scripts/check-docs.js --staged

@@ -1,0 +1,14 @@
+---
+description: Keep docs/ mirrored with code and follow the repo coding style
+alwaysApply: true
+---
+
+# Docs sync and style
+
+- Docs mirror the code path: `src/a/b.js` is documented in `docs/src/a/b.js.md`.
+- Before editing a code file, read its mirrored doc. After editing, fix stale parts and add missing information in the same commit.
+- New code file needs a new doc. Deleted code file needs its doc deleted.
+- Code style: minimal and readable. Multi-line comments only at the top of a file. Explanations belong in `docs/`.
+- Run `npm run lint` and `npm test` before committing.
+
+Full rules: `AGENTS.md` and `docs/guidelines.md`.
