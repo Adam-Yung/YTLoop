@@ -5,7 +5,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { createContext, capture } = require('./lib/ctx');
-const { startAwake } = require('./lib/awake');
+const { startAwake, wakeScreen, screenState, isAwake } = require('./lib/awake');
 
 const RESULTS = path.join(__dirname, 'results');
 const stamp = () => new Date().toISOString().replace(/[:.]/g, '-');
@@ -31,9 +31,19 @@ async function main() {
   if (!capture.supported) console.log('NOTE  real-screen capture is macOS only here; screen checks are skipped');
 
   const awake = startAwake();
+  const woke = await wakeScreen();
+  const ready = await ctx.check('screen.1', 'the display is awake: no screensaver running and the screen is not locked', async () => isAwake(woke));
+  if (!ready) {
+    awake.stop();
+    ctx.cleanup();
+    console.log('\nresult: aborted, the screen is locked or showing a screensaver that could not be dismissed; unlock it and rerun');
+    process.exitCode = 1;
+    return;
+  }
   for (const scenario of chosen) {
     console.log(`\n== ${scenario.name}`);
     try { await scenario.run(ctx); } catch (err) { await ctx.check(`${scenario.name}.crash`, `scenario ran to the end: ${String(err.message).split('\n')[0]}`, () => false); }
+    await ctx.check(`${scenario.name}.screen`, 'the display stayed awake for the whole scenario (no screensaver or lock)', async () => isAwake(await screenState()));
   }
   awake.stop();
   ctx.cleanup();

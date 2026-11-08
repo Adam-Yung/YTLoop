@@ -55,7 +55,7 @@ async function disableAutonav(page, ctx) {
     const isOn = () => toggle.evaluate(el =>
       (el.getAttribute('aria-checked') || el.querySelector('[aria-checked]')?.getAttribute('aria-checked')) === 'true');
     if (!(await isOn())) return false;
-    await humanClick(page, toggle, ctx.cfg, ctx.signal);
+    if (!(await humanClick(page, toggle, ctx.cfg, ctx.signal, { stillNeeded: isOn }))) return false;
     for (let waited = 0; waited < ctx.cfg.clickTimeoutMs && (await isOn()); waited += 100) await sleep(100, ctx.signal);
     if (await isOn()) {
       ctx.log.info('[player] Autoplay toggle did not turn off; will check again');
@@ -72,9 +72,9 @@ async function likeIfNeeded(page, ctx) {
   try {
     if (await page.locator(S.signedOut).count()) return false;
     const like = page.locator(S.like).first();
-    if (!(await like.isVisible())) return false;
-    if ((await like.getAttribute('aria-pressed')) !== 'false') return false;
-    await humanClick(page, like, ctx.cfg, ctx.signal);
+    const unliked = async () => (await like.getAttribute('aria-pressed')) === 'false';
+    if (!(await like.isVisible()) || !(await unliked())) return false;
+    if (!(await humanClick(page, like, ctx.cfg, ctx.signal, { stillNeeded: unliked }))) return false;
     ctx.log.info('[like] Liked the video');
     return true;
   } catch (err) {
@@ -85,11 +85,13 @@ async function likeIfNeeded(page, ctx) {
 
 async function resumeIfPaused(page, ctx) {
   try {
+    const paused = () => page.evaluate(sel => document.querySelector(sel)?.paused === true, S.video);
+    if (!(await paused())) return false;
     const play = page.locator(S.playButton).first();
     if (!(await play.isVisible())) return false;
-    await humanClick(page, play, ctx.cfg, ctx.signal);
-    ctx.log.info('[player] Pressed Play');
-    return true;
+    const clicked = await humanClick(page, play, ctx.cfg, ctx.signal, { stillNeeded: paused });
+    if (clicked) ctx.log.info('[player] Pressed Play');
+    return clicked;
   } catch {
     return false;
   }

@@ -100,3 +100,22 @@ test('when signed out nothing is clicked', async ({ context, page }) => {
   expect(await likeIfNeeded(page, makeCtx())).toBe(false);
   expect(kinds(await logOf(page), 'like-click')).toHaveLength(0);
 });
+
+test('Play is not pressed when the video starts by itself during the click pause', async ({ context, page }) => {
+  await open(context, page, { startPaused: true });
+  const ctx = makeCtx({ clickPauseMs: [400, 400] });
+  const race = resumeIfPaused(page, ctx);
+  await page.evaluate(() => document.querySelector('video').play());
+  expect(await race).toBe(false);
+  expect(kinds(await logOf(page), 'play-click')).toHaveLength(0);
+  expect((await mediaState(page)).paused).toBe(false);
+});
+
+test('Like is not pressed when the video became liked during the click pause', async ({ context, page }) => {
+  await open(context, page, {});
+  const ctx = makeCtx({ clickPauseMs: [400, 400] });
+  const race = likeIfNeeded(page, ctx);
+  await page.evaluate(() => document.querySelector('like-button-view-model button').setAttribute('aria-pressed', 'true'));
+  expect(await race).toBe(false);
+  expect(kinds(await logOf(page), 'like-click')).toHaveLength(0);
+});
