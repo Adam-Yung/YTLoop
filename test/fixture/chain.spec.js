@@ -18,10 +18,10 @@ const catalog = extra => ({
   [ids.a1]: vid('a1', 'a', extra.a1), [ids.a2]: vid('a2', 'a', extra.a2),
   [ids.a3]: vid('a3', 'a', extra.a3), [ids.a4]: vid('a4', 'a', extra.a4), [ids.z1]: vid('z1', 'z', extra.z1),
 });
-const cfg = { timeScale: 40, stallTimeoutMs: 800, startupTimeoutMs: 600, retryDelayMs: 50, botWaitMs: 400, wallCheckMs: 100, recommendationRetryMs: 100, navigationTimeoutMs: 5000 };
+const cfg = { stallTimeoutMs: 800, startupTimeoutMs: 600, retryDelayMs: 50, botWaitMs: 400, wallCheckMs: 100, recommendationRetryMs: 100, navigationTimeoutMs: 5000 };
 
 async function run({ context, page }, extra, { length = 3, start = ids.a1, setup, ctxExtra = {} } = {}) {
-  const site = await createSite(context, { videos: catalog(extra), channels });
+  const site = await createSite(context, { videos: catalog(extra), channels, timeScale: 10 });
   setup?.(site);
   const session = createSession();
   const ctx = makeCtx({ ...cfg, ...ctxExtra });
