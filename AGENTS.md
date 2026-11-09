@@ -2,6 +2,10 @@
 
 Applies to every agent and contributor.
 
+## Run only on the VM
+
+This project drives real browsers, the real mouse and the real screen. It runs only on the test VM (`VM_SSH` in `.env`), never on the developer Mac. Use `npm run vm:setup | vm:test | vm:verify | vm:probe | vm:watch | vm:start` (see `docs/vm.md`, decision 0008). The plain `npm test`, `verify`, `probe`, `start` scripts refuse to run without `YTLOOP_VM=1`; never set that by hand on the Mac. The Mac is for editing, git and `npm run lint` (read-only checks). Do not install browsers, Playwright or project dependencies on the Mac.
+
 ## Docs must stay in sync with code
 
 - Documentation lives in `docs/` and mirrors the code path: `src/watch.js` is documented in `docs/src/watch.js.md`, `scripts/check-docs.js` in `docs/scripts/check-docs.js.md`.
@@ -13,11 +17,11 @@ Applies to every agent and contributor.
 
 ## Scratch files
 
-Never write to `/tmp` or the system temp dir (it triggers allowlist prompts for the owner). Use `<repo>/tmp/` (git-ignored; `test/helpers/tmp.js` has `tmpDir`/`removeDir`). Delete what you create there when you are done.
+Never write to `/tmp` or the system temp dir (it triggers allowlist prompts for the owner). Use `<repo>/tmp/` (git-ignored; `test/helpers/tmp.js` has `tmpDir`/`removeDir`). Delete what you create there when you are done. Fetched VM evidence lands in `tmp/vm-results`. Delete files with the Delete tool, not `rm` in a chained command.
 
 ## Visual verification
 
-Anything that changes what the browser does must also pass `npm run verify` (real screen checks). `npm run probe` checks the real YouTube DOM. See `docs/visual.md` and the `visual-verify` skill.
+Anything that changes what the browser does must also pass `npm run vm:verify` (real screen checks). `npm run vm:probe` checks the real YouTube DOM. See `docs/visual.md` and the `visual-verify` skill.
 
 ## Style
 
@@ -25,5 +29,5 @@ See `docs/guidelines.md`. In short: minimal and readable, a multi-line comment o
 
 ## Workflow
 
-- Run `npm run lint` and `npm test` before every commit.
+- Run `npm run lint` on the Mac and `npm run vm:test` before every commit.
 - One logical change per commit.

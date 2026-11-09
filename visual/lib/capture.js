@@ -32,14 +32,29 @@ function startRecording(file) {
   };
 }
 
-async function extractFrames(video, dir, fps = 2) {
+function startSampler(dir, everyMs) {
   fs.mkdirSync(dir, { recursive: true });
-  try {
-    await run('ffmpeg', ['-y', '-loglevel', 'error', '-i', video, '-vf', `fps=${fps}`, path.join(dir, 'frame_%03d.png')]);
-  } catch {
-    return [];
-  }
-  return fs.readdirSync(dir).filter(f => f.endsWith('.png')).sort().map(f => path.join(dir, f));
+  const files = [];
+  let busy = false;
+  const timer = supported && setInterval(async () => {
+    if (busy) return;
+    busy = true;
+    const file = path.join(dir, `sample_${String(files.length + 1).padStart(3, '0')}.png`);
+    try {
+      if (await screenshot(file)) {
+        await run('sips', ['--resampleWidth', '640', file]);
+        files.push(file);
+      }
+    } catch { /* A missed sample is fine; the checks require most of them. */ }
+    busy = false;
+  }, everyMs);
+  return {
+    stop: async () => {
+      if (timer) clearInterval(timer);
+      while (busy) await new Promise(r => setTimeout(r, 100));
+      return files;
+    },
+  };
 }
 
 const windowGeometry = page => page.evaluate(() => ({
@@ -76,4 +91,4 @@ async function raiseWindow(page, channel) {
 
 const readPng = file => decode(fs.readFileSync(file));
 
-module.exports = { supported, screenshot, startRecording, extractFrames, elementOnScreen, windowGeometry, raiseWindow, readPng };
+module.exports = { supported, screenshot, startRecording, startSampler, elementOnScreen, windowGeometry, raiseWindow, readPng };

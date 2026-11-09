@@ -33,6 +33,7 @@ module.exports = {
     const timer = setTimeout(() => abort.abort(), BUDGET_MS);
     const video = path.join(ctx.dir, 'watch.mov');
     const rec = capture.startRecording(video);
+    const sampler = capture.startSampler(path.join(ctx.dir, 'watch-samples'), 20000);
     const incidents = [];
     const watchdog = setInterval(async () => {
       const state = await screenState();
@@ -48,6 +49,7 @@ module.exports = {
       clearTimeout(timer);
       clearInterval(watchdog);
     }
+    const samples = await sampler.stop();
     const recorded = await rec.stop();
     await browser.close();
     ctx.note('chain result:', JSON.stringify(result));
@@ -66,13 +68,13 @@ module.exports = {
     else ctx.skip('watch.6', 'the video was liked', 'not signed in or already liked');
     await ctx.check('watch.7', 'no wall or fatal error ended the chain', async () => !['wall', 'browser', 'failures'].includes(result.reason));
 
-    if (!capture.supported) return ctx.skip('watch.8', 'the screen recording shows non-blank content', 'no screen capture on this platform');
-    await ctx.check('watch.8', 'the screen recording shows non-blank content', async () => {
+    if (!capture.supported) return ctx.skip('watch.8', 'the screen samples show non-blank content', 'no screen capture on this platform');
+    await ctx.check('watch.8', 'screen samples taken every 20 s show non-blank content', async () => {
       if (!recorded) return false;
-      const frames = await capture.extractFrames(video, path.join(ctx.dir, 'watch-frames'), 0.2);
-      const live = frames.filter(f => !looksBlank(regionStats(capture.readPng(f), { x: 0, y: 0, w: 4000, h: 4000 })));
-      ctx.note('frames:', frames.length, 'non-blank:', live.length);
-      return frames.length > 3 && live.length >= frames.length * 0.9;
+      const pngs = samples.map(f => capture.readPng(f));
+      const lively = pngs.filter(p => !looksBlank(regionStats(p, { x: 0, y: 0, w: p.width, h: p.height })));
+      ctx.note('samples:', pngs.length, 'non-blank:', lively.length);
+      return pngs.length > 3 && lively.length >= pngs.length * 0.9;
     });
   },
 };

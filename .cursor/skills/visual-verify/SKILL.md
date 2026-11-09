@@ -1,17 +1,17 @@
 ---
 name: visual-verify
-description: Run, extend or debug the real-screen verification for YTLoop (headed browser, screen screenshots and recordings, pixel checks, live YouTube probe). Use after any change to browser, ad, like, chain or selector code, when the browser window is blank or wrong, or when asked to verify visually.
+description: Run, extend or debug the real-screen verification for YTLoop on the test VM (headed browser, screen screenshots and recordings, pixel checks, live YouTube probe). Use after any change to browser, ad, like, chain or selector code, when the browser window is blank or wrong, or when asked to verify visually.
 ---
 
 # Visual verification
 
-Read `docs/visual.md` first. Plain Node plus macOS `screencapture`; no model is needed to run it.
+Read `docs/visual.md` and `docs/vm.md` first. Everything runs on the test VM; the Mac only edits, lints and looks at fetched evidence.
 
 ## Run
 
-1. `npm run verify` runs the fixture scenarios (launch, ads, like, chain). A run takes about 40 s and opens a visible browser window. Do not touch the mouse or keyboard while it runs.
-2. `npm run probe` checks the real YouTube DOM. `npm run verify:live watch` plays a real video for a while.
-3. Read the PASS/FAIL lines, then open the evidence in `visual/results/<latest>/`: `*.screen.png` is what the real screen looked like. Look at the images before changing code.
+1. Make sure the VM is started (`/Applications/UTM.app/Contents/MacOS/utmctl list`; `start macOS` if stopped). Nobody should touch the VM display during a run.
+2. `npm run vm:verify` runs the fixture scenarios (launch, ads, like, chain), about a minute. `npm run vm:probe` checks the real YouTube DOM. `npm run vm:watch` plays real videos for several minutes.
+3. Read the PASS/FAIL lines, then open the evidence copied to `tmp/vm-results/<latest>/`: `*.screen.png` is what the VM screen looked like. Look at the images before changing code. Delete `tmp/vm-results` when finished.
 4. A FAIL is a finding until proven a test bug. Reproduce by hand in a screenshot first.
 
 ## Extend
@@ -23,9 +23,10 @@ Read `docs/visual.md` first. Plain Node plus macOS `screencapture`; no model is 
 
 ## Gotchas
 
-- Scratch files go in `<repo>/tmp/`, never `/tmp`. Delete them after.
-- The owner's screensaver starts after 15 minutes: `visual/lib/awake.js` nudges the mouse; keep using it in any long run.
+- Never run a browser, the tests or the app on the Mac: the npm scripts refuse without `YTLOOP_VM=1`.
+- Scratch files go in `<repo>/tmp/`, never `/tmp`. Delete them with the Delete tool, not chained `rm`.
 - Never use System Events/AppleScript (permission prompt). Raise the window with `open -a`.
-- Installed Google Chrome is admin-locked here (remote debugging disallowed); use the default `BROWSER_CHANNEL=chromium`.
+- Installed Google Chrome is admin-locked on managed Macs (remote debugging disallowed); use the default `BROWSER_CHANNEL=chromium`.
 - A stale macOS permission dialog or notification banner can cover part of the screen and break a pixel check; take a screenshot and look.
-- The mapping from page boxes to screen pixels assumes the window is on display 1.
+- The VM shares one screen with prisma-encryptor; the lease in `vm/lib.sh` serializes runs. If a lease looks stuck, check who holds it before breaking it.
+- The mapping from page boxes to screen pixels assumes the window is on display 1; `launch.4` proves it on the VM.

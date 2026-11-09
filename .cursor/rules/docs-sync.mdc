@@ -1,16 +1,17 @@
 ---
-description: Keep docs/ mirrored with code and follow the repo coding style
+description: Keep docs/ mirrored with code, follow the repo coding style, and run everything on the test VM
 alwaysApply: true
 ---
 
-# Docs sync and style
+# Docs sync, style and VM-only runs
 
+- Run browsers, the app and tests only on the test VM via `npm run vm:*` (docs/vm.md). Never on the developer Mac; do not install browsers or project dependencies there. `npm run lint` is the only thing that runs on the Mac.
 - Docs mirror the code path: `src/a/b.js` is documented in `docs/src/a/b.js.md`.
 - Before editing a code file, read its mirrored doc. After editing, fix stale parts and add missing information in the same commit.
 - New code file needs a new doc. Deleted code file needs its doc deleted.
 - Code style: minimal and readable. Multi-line comments only at the top of a file. Explanations belong in `docs/`.
-- Scratch files go in `<repo>/tmp/` (never `/tmp`); delete them when done.
-- Behavior changes also need `npm run verify` to pass (see `docs/visual.md`).
-- Run `npm run lint` and `npm test` before committing.
+- Scratch files go in `<repo>/tmp/` (never `/tmp`); delete them when done, with the Delete tool.
+- Behavior changes also need `npm run vm:verify` to pass (see `docs/visual.md`).
+- Run `npm run lint` and `npm run vm:test` before committing.
 
 Full rules: `AGENTS.md` and `docs/guidelines.md`.

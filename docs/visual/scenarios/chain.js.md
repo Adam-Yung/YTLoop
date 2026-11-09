@@ -1,3 +1,3 @@
 # visual/scenarios/chain.js
 
-Runs `runChain` for 3 videos (time scaled 3x) while `screencapture -v` records the screen. Checks: chain ended `done` with 3 watched; visits stayed on Channel A with referers (clicks); a recording exists; frames at 2 fps are mostly non-blank and show at least 2 distinct looks. Evidence: `chain.mov` and `frames/`.
+Runs `runChain` for 3 videos (time scaled 3x) while `screencapture -v` records the screen and a sampler takes a downscaled screenshot every 1.5 s. Checks: chain ended `done` with 3 watched; visits stayed on Channel A with referers (clicks); a recording exists; at least 4 samples, most of them non-blank, with at least 2 distinct looks (the screen changes as videos change). Evidence: `chain.mov` and `chain-samples/`.

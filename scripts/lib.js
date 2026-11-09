@@ -5,7 +5,7 @@
 const { execFileSync } = require('node:child_process');
 const fs = require('node:fs');
 
-const ROOTS = ['src/', 'scripts/', 'test/', 'visual/', '.githooks/'];
+const ROOTS = ['src/', 'scripts/', 'test/', 'visual/', 'vm/', '.githooks/'];
 const ROOT_FILES = ['playwright.config.js'];
 const SKIP = ['test/fixtures/', 'visual/results/'];
 
@@ -19,15 +19,16 @@ const sourceFiles = () =>
 
 const stagedFiles = () => git('diff', '--cached', '--name-only', '--diff-filter=AMR');
 
-const bodyOf = text => {
+const bodyOf = (text, kind = 'js') => {
+  const comment = kind === 'sh' ? '#' : '//';
   const lines = text.split('\n');
   let i = 0;
   let inBlock = false;
   for (; i < lines.length; i++) {
     const t = lines[i].trim();
     if (inBlock) { if (t.includes('*/')) inBlock = false; continue; }
-    if (t.startsWith('#!') || t.startsWith('//') || t === '' || t === "'use strict';") continue;
-    if (t.startsWith('/*')) { inBlock = !t.includes('*/'); continue; }
+    if (t.startsWith('#!') || t.startsWith(comment) || t === '' || t === "'use strict';") continue;
+    if (kind === 'js' && t.startsWith('/*')) { inBlock = !t.includes('*/'); continue; }
     break;
   }
   return { offset: i, lines: lines.slice(i) };

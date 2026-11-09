@@ -8,13 +8,20 @@
   },
   "scripts": {
     "setup": "playwright install chromium",
-    "start": "node src/main.js",
-    "probe": "node visual/run.js --live probe",
-    "test": "playwright test --project=unit --project=fixture",
+    "start": "node scripts/require-vm.js && node src/main.js",
+    "probe": "node scripts/require-vm.js && node visual/run.js --live probe",
+    "test": "node scripts/require-vm.js && playwright test --project=unit --project=fixture",
+    "verify": "node scripts/require-vm.js && node visual/run.js",
+    "verify:live": "node scripts/require-vm.js && node visual/run.js --live",
     "lint": "node scripts/check-style.js && node scripts/check-docs.js",
     "prepare": "git config core.hooksPath .githooks || true",
-    "verify": "node visual/run.js",
-    "verify:live": "node visual/run.js --live"
+    "vm:setup": "bash vm/setup.sh",
+    "vm:test": "bash vm/run.sh test",
+    "vm:verify": "bash vm/run.sh verify",
+    "vm:probe": "bash vm/run.sh probe",
+    "vm:watch": "bash vm/run.sh --bg verify:live watch",
+    "vm:start": "bash vm/run.sh --bg start",
+    "vm:fetch": "bash vm/fetch.sh"
   },
   "dependencies": {
     "@playwright/test": "^1.50.0"
