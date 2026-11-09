@@ -39,13 +39,4 @@ const looksBlank = stats => stats.count === 0 || stats.colors < 2 || stats.lumaS
 
 const near = (a, b, tolerance = 24) => a.every((v, i) => Math.abs(v - b[i]) <= tolerance);
 
-function colorShare(png, rect, color, tolerance = 40) {
-  const x0 = clamp(Math.floor(rect.x), 0, png.width), y0 = clamp(Math.floor(rect.y), 0, png.height);
-  const x1 = clamp(Math.ceil(rect.x + rect.w), 0, png.width), y1 = clamp(Math.ceil(rect.y + rect.h), 0, png.height);
-  let hits = 0;
-  for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) if (near(pixelAt(png, x, y), color, tolerance)) hits += 1;
-  const total = (x1 - x0) * (y1 - y0);
-  return total ? hits / total : 0;
-}
-
-module.exports = { pixelAt, regionStats, looksBlank, near, colorShare };
+module.exports = { pixelAt, regionStats, looksBlank, near };

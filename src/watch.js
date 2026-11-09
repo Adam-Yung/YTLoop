@@ -40,6 +40,7 @@ async function watchVideo(page, id, session, ctx, { fresh = false, last = false 
 
     let media = null;
     try { media = await mediaState(page); } catch { /* Page is navigating; try again. */ }
+    if (media && !media.ad && media.videoId && media.videoId !== id) media = null;
 
     if (now - lastOwnerAt > 2500 && !session.owner?.id) {
       lastOwnerAt = now;

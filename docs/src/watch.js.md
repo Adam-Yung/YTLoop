@@ -16,7 +16,7 @@ Throws on: tab closed, player never loaded (`startupTimeoutMs`), live video, ad 
 1. Tab and URL checks.
 2. Every `wallCheckMs`: `waitForHuman` (blocks while a human clears a wall).
 3. `skipIfAvailable`: first thing, on every poll, ad or not, so pods and mid-rolls are covered.
-4. Read media state; read the channel owner until known.
+4. Read media state; read the channel owner until known. A reading whose `videoId` is another video (and is not an ad) is discarded: after a click-through the reused `<video>` briefly reports the previous video's duration and position, which once made the app click away from a 19 minute video after 2 s.
 5. If an ad is showing: only track stall time, then loop. Content timing is ignored during ads.
 6. Content (first time `played`, see 7, is true): like the video once via `likeIfNeeded`. Never during ads.
 6b. Content: once the player is ready (`initialized`) and then every `autonavCheckMs`, make sure autoplay is off; return `ended`; press Play if paused (at most every 5 s); track progress (a position that moved by more than 0.1 s forward, or jumped back by more than 1 s, counts; the jump back covers the reused `<video>` element reporting the previous video's end position for a moment after a click-through, which was once misread as a 120 s stall).

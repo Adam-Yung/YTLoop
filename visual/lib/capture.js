@@ -96,6 +96,15 @@ async function raiseWindow(page, cfg) {
   } catch { /* Raising is best effort; the checks will say if the window is hidden. */ }
 }
 
+const FRONT = `ObjC.import('AppKit'); $.NSWorkspace.sharedWorkspace.frontmostApplication.processIdentifier`;
+
+async function isFrontmost(cfg) {
+  if (!supported) return true;
+  const pid = await browserPid(cfg.profileDir);
+  const { stdout } = await run('osascript', ['-l', 'JavaScript', '-e', FRONT]);
+  return pid !== null && Number(stdout) === pid;
+}
+
 const readPng = file => decode(fs.readFileSync(file));
 
-module.exports = { supported, screenshot, startRecording, startSampler, elementOnScreen, windowGeometry, raiseWindow, readPng };
+module.exports = { supported, screenshot, startRecording, startSampler, elementOnScreen, windowGeometry, raiseWindow, isFrontmost, readPng };

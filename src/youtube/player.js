@@ -17,6 +17,7 @@ const readMedia = ({ selector, playerSelector }) => {
     paused: v.paused,
     ended: v.ended,
     ready: v.readyState,
+    videoId: p?.getVideoData?.()?.video_id || '',
   };
 };
 

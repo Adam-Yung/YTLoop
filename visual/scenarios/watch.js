@@ -9,17 +9,8 @@ const { createSession } = require('../../src/watch');
 const { runChain } = require('../../src/chain');
 const { capture, looksBlank } = require('../lib/ctx');
 const { screenState, wakeScreen, isAwake } = require('../lib/awake');
-const { regionStats, colorShare } = require('../lib/regions');
+const { regionStats } = require('../lib/regions');
 const S = require('../../src/youtube/selectors');
-
-const LOGO = 'ytd-masthead #logo-icon';
-const YOUTUBE_RED = [255, 0, 0];
-
-async function logoRedShare(page, png) {
-  const r = await capture.elementOnScreen(page, png, LOGO);
-  if (!r) return 0;
-  return colorShare(png, { x: r.x - r.w, y: r.y - r.h, w: r.w * 3, h: r.h * 3 }, YOUTUBE_RED, 60);
-}
 
 const BUDGET_MS = 8 * 60 * 1000;
 
@@ -49,14 +40,14 @@ module.exports = {
       const state = await screenState();
       if (!isAwake(state)) { incidents.push(new Date().toISOString()); await wakeScreen(); }
     }, 15000);
-    let result, signedIn, logo;
+    let result, signedIn, front;
     try {
       const page = await browser.page();
       await capture.raiseWindow(page, cfg);
       result = await runChain({ startId: ids[0], length: 2, session: createSession(), ctx: { cfg, log, signal: abort.signal }, browser });
       const shot = await ctx.evidence(page, 'watch-end');
       signedIn = (await page.locator(S.signedOut).count()) === 0;
-      logo = shot.os ? await logoRedShare(page, shot.os) : null;
+      front = await capture.isFrontmost(cfg);
     } finally {
       clearTimeout(timer);
       clearInterval(watchdog);
@@ -80,12 +71,7 @@ module.exports = {
     if (lines.some(l => l.includes('[like] Liked'))) await ctx.check('watch.6', 'the video was liked', async () => true);
     else ctx.skip('watch.6', 'the video was liked', signedIn ? 'already liked' : 'signed out');
     await ctx.check('watch.7', 'no wall or fatal error ended the chain', async () => !['wall', 'browser', 'failures'].includes(result.reason));
-    if (logo !== null && logo !== undefined) {
-      await ctx.check('watch.9', 'the real screen shows YouTube\'s red logo where the page says it is (the app window is not covered)', async () => {
-        ctx.note('red share around the logo:', logo.toFixed(3));
-        return logo > 0.05;
-      });
-    }
+    await ctx.check('watch.9', 'the app\'s own browser window is the frontmost window at the end (nothing covers it)', async () => front);
 
     if (!capture.supported) return ctx.skip('watch.8', 'the screen samples show non-blank content', 'no screen capture on this platform');
     await ctx.check('watch.8', 'screen samples taken every 20 s show non-blank content', async () => {

@@ -4,7 +4,7 @@
 
 const { test, expect } = require('@playwright/test');
 const { decode, encode, solid } = require('../../visual/lib/png');
-const { pixelAt, regionStats, looksBlank, near, colorShare } = require('../../visual/lib/regions');
+const { pixelAt, regionStats, looksBlank, near } = require('../../visual/lib/regions');
 
 const paint = (png, rect, [r, g, b]) => {
   for (let y = rect.y; y < rect.y + rect.h; y++) {
@@ -52,11 +52,4 @@ test('regionStats mean and clamping', () => {
 test('near compares colors within tolerance', () => {
   expect(near([34, 34, 34], [30, 40, 34], 10)).toBe(true);
   expect(near([34, 34, 34], [200, 0, 0], 10)).toBe(false);
-});
-
-test('colorShare is the fraction of pixels near a color', () => {
-  const img = solid(10, 10, [255, 255, 255]);
-  paint(img, { x: 0, y: 0, w: 5, h: 2 }, [250, 5, 5]);
-  expect(colorShare(img, { x: 0, y: 0, w: 10, h: 10 }, [255, 0, 0])).toBeCloseTo(0.1);
-  expect(colorShare(img, { x: 0, y: 5, w: 10, h: 5 }, [255, 0, 0])).toBe(0);
 });

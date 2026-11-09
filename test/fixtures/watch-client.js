@@ -17,7 +17,9 @@
 
   const def = (name, get, set) => Object.defineProperty(video, name, { get, set: set || (v => log.push({ t: 'tamper', name, v })), configurable: true });
   const t0 = performance.now();
-  def('currentTime', () => (data.staleCurrent != null && performance.now() - t0 < 400 ? data.staleCurrent : current()));
+  const stale = () => data.staleCurrent != null && performance.now() - t0 < 300;
+  def('currentTime', () => (stale() ? data.staleCurrent : current()));
+  player.getVideoData = () => ({ video_id: stale() ? 'previousvid' : data.id });
   def('duration', duration);
   def('paused', () => s.paused, () => {});
   def('ended', () => s.ended, () => {});
