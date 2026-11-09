@@ -13,7 +13,7 @@ Live and `manual` (run on the VM with `npm run vm:watch`; minutes long, budget 8
 | `watch.signin` | the profile is signed in to YouTube (no Sign in link at the end); fails when signed out, run `npm run vm:login` |
 | `watch.6` | the video was liked (skipped when already liked) |
 | `watch.7` | the chain did not end with `wall`, `browser` or `failures` |
-| `watch.9` | the real screen shows YouTube's red logo (`ytd-masthead #logo-icon`) where the page says it is, so another window (for example the person's own Chrome) is not covering the app |
+| `watch.9` | at least 5% of the pixels around the logo (`ytd-masthead #logo-icon`, box tripled) on the real screen are YouTube red, so another window (for example the person's own Chrome) is not covering the app |
 | `watch.8` | at least 4 samples and 90% of them non-blank |
 
 Evidence in the run folder: `watch.mov`, `watch-samples/`, `watch-end.*.png`, `logs/errors.log`. Look at the samples: a non-blank check alone cannot tell YouTube from a screensaver (that is what `watch.0` and `screen.1` guard).

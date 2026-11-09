@@ -3,7 +3,7 @@
 Covers `src/youtube/player.js` against the fake site:
 
 - Skippable ad: one click, `isTrusted: true`.
-- Ad pod (two ads) plus a later mid-roll: three clicks in total.
+- Ad pod (two ads) plus a later mid-roll: three clicks in total. Skippable test ads are 100 s long so a slow, loaded VM cannot let an ad end by itself before its Skip is clicked (that made this test fail about once in three runs).
 - Skip button covered by an overlay: Playwright refuses the click, nothing is recorded.
 - Unskippable ad: no click, no tampering, ad plays out.
 - Full ad plus content run: zero `tamper` events (no seek, mute or speed change).

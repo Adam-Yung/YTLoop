@@ -10,6 +10,7 @@ const chrome = { ...channel, headless: !process.env.HEADED };
 module.exports = defineConfig({
   timeout: 30000,
   fullyParallel: true,
+  workers: 3,
   reporter: [['list']],
   projects: [
     { name: 'unit', testDir: 'test/unit' },

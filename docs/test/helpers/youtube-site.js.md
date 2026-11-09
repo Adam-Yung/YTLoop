@@ -19,6 +19,7 @@ Video: `{ id, title, channel, duration, related, breaks, layout, startPaused, au
 - `autoplayDelayMs`: delay before the autoplay switch (default 300).
 - `autonavStuck`: the autoplay toggle ignores clicks, so a switch cannot be prevented.
 - `stallAt`: content second at which playback freezes.
+- `staleCurrent`: for the first 400 ms `currentTime` reports this value (the previous video's end), like the reused `<video>` element after a click-through on the real site.
 - `liked`: the Like button starts pressed.
 - `signedOut`: renders a masthead sign-in link.
 - `timeScale`: media seconds per real second (default 20) so tests run fast.

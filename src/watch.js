@@ -83,7 +83,7 @@ async function watchVideo(page, id, session, ctx, { fresh = false, last = false 
       lastPlayAt = now;
       await resumeIfPaused(page, ctx);
     }
-    if (media.current > lastPosition + 0.1) {
+    if (media.current > lastPosition + 0.1 || media.current < lastPosition - 1) {
       lastProgressAt = now;
       lastPosition = media.current;
     }

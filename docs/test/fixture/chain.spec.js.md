@@ -6,9 +6,10 @@ End-to-end tests of `watchVideo` and `runChain` on the fake site with scaled tim
 - No same-channel card: video ends, channel Videos page used, no other-channel video visited.
 - Forced autoplay switch to another channel: rejected.
 - Stalled playback: abandoned for another upload.
+- Stale `currentTime` (previous video's end carried over by the reused `<video>`): not a stall.
 - Missing video: three consecutive failures end the chain with `failures`.
 - Bot wall: chain ends with `wall`, no extra navigation.
 - Like: the last video of a chain is liked exactly once.
 - Abort: chain returns `stopped` promptly.
 
-The fake site runs at `timeScale: 10` (1 s of video takes 100 ms). Faster clocks made the last-10-seconds window shorter than one watch-loop iteration in real Chrome (each Play, autoplay and Like click costs a few hundred ms), so the recommendation was missed and the test fell back to the channel page about a third of the time.
+The fake site runs at `timeScale: 5` (1 s of video takes 200 ms; the 20 s videos last 4 s). Faster clocks made the last-10-seconds window shorter than one watch-loop iteration in real Chrome (each Play, autoplay and Like click costs a few hundred ms), so the recommendation was missed and the test fell back to the channel page about a third of the time.

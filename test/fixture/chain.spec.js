@@ -21,7 +21,7 @@ const catalog = extra => ({
 const cfg = { stallTimeoutMs: 800, startupTimeoutMs: 600, retryDelayMs: 50, botWaitMs: 400, wallCheckMs: 100, recommendationRetryMs: 100, navigationTimeoutMs: 5000 };
 
 async function run({ context, page }, extra, { length = 3, start = ids.a1, setup, ctxExtra = {} } = {}) {
-  const site = await createSite(context, { videos: catalog(extra), channels, timeScale: 10 });
+  const site = await createSite(context, { videos: catalog(extra), channels, timeScale: 5 });
   setup?.(site);
   const session = createSession();
   const ctx = makeCtx({ ...cfg, ...ctxExtra });
@@ -62,6 +62,12 @@ test('a stalled video is abandoned for another upload', async ({ context, page }
   const { result, session } = await run({ context, page }, { a1: { stallAt: 3 } }, { length: 1 });
   expect(result).toEqual({ reason: 'done', watched: 1 });
   expect(session.visited.size).toBe(2);
+});
+
+test('a stale currentTime from the previous video is not a stall', async ({ context, page }) => {
+  const { result, session } = await run({ context, page }, { a1: { staleCurrent: 15 } }, { length: 1 });
+  expect(result).toEqual({ reason: 'done', watched: 1 });
+  expect(session.visited.size).toBe(1);
 });
 
 test('three consecutive failures end the chain', async ({ context, page }) => {

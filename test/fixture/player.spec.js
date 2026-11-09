@@ -19,7 +19,7 @@ async function open(context, page, video) {
 }
 
 test('skips a skippable ad with a trusted click', async ({ context, page }) => {
-  await open(context, page, { breaks: [{ at: 0, ads: [{ length: 10, skipAfter: 1 }] }] });
+  await open(context, page, { breaks: [{ at: 0, ads: [{ length: 100, skipAfter: 1 }] }] });
   const skip = createSkipper(makeCtx());
   expect(await until(async () => skip(page))).toBe(true);
   expect(kinds(await logOf(page), 'skip-click')).toEqual([expect.objectContaining({ trusted: true })]);
@@ -29,8 +29,8 @@ test('skips every ad in a pod and a later mid-roll', async ({ context, page }) =
   await open(context, page, {
     duration: 20,
     breaks: [
-      { at: 0, ads: [{ length: 10, skipAfter: 1 }, { length: 10, skipAfter: 1 }] },
-      { at: 5, ads: [{ length: 10, skipAfter: 1 }] },
+      { at: 0, ads: [{ length: 100, skipAfter: 1 }, { length: 100, skipAfter: 1 }] },
+      { at: 5, ads: [{ length: 100, skipAfter: 1 }] },
     ],
   });
   const skip = createSkipper(makeCtx());
@@ -39,7 +39,7 @@ test('skips every ad in a pod and a later mid-roll', async ({ context, page }) =
 });
 
 test('a covered skip button is never clicked', async ({ context, page }) => {
-  await open(context, page, { skipCovered: true, breaks: [{ at: 0, ads: [{ length: 10, skipAfter: 1 }] }] });
+  await open(context, page, { skipCovered: true, breaks: [{ at: 0, ads: [{ length: 100, skipAfter: 1 }] }] });
   const skip = createSkipper(makeCtx());
   await until(async () => (await page.locator('.ytp-skip-ad-button:visible').count()) > 0);
   expect(await skip(page)).toBe(false);
@@ -58,7 +58,7 @@ test('an unskippable ad is left alone and untouched', async ({ context, page }) 
 });
 
 test('a whole ad and content run never seeks, mutes or changes speed', async ({ context, page }) => {
-  await open(context, page, { breaks: [{ at: 0, ads: [{ length: 10, skipAfter: 1 }] }] });
+  await open(context, page, { breaks: [{ at: 0, ads: [{ length: 100, skipAfter: 1 }] }] });
   const ctx = makeCtx();
   const skip = createSkipper(ctx);
   await until(async () => { await skip(page); await disableAutonav(page, ctx); return (await mediaState(page)).ended; }, 15000);

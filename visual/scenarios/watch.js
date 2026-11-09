@@ -7,12 +7,19 @@ const { createBrowser } = require('../../src/browser');
 const { fetchPlaylist } = require('../../src/playlist');
 const { createSession } = require('../../src/watch');
 const { runChain } = require('../../src/chain');
-const { capture, looksBlank, statsOnScreen } = require('../lib/ctx');
+const { capture, looksBlank } = require('../lib/ctx');
 const { screenState, wakeScreen, isAwake } = require('../lib/awake');
-const { regionStats } = require('../lib/regions');
+const { regionStats, colorShare } = require('../lib/regions');
 const S = require('../../src/youtube/selectors');
 
 const LOGO = 'ytd-masthead #logo-icon';
+const YOUTUBE_RED = [255, 0, 0];
+
+async function logoRedShare(page, png) {
+  const r = await capture.elementOnScreen(page, png, LOGO);
+  if (!r) return 0;
+  return colorShare(png, { x: r.x - r.w, y: r.y - r.h, w: r.w * 3, h: r.h * 3 }, YOUTUBE_RED, 60);
+}
 
 const BUDGET_MS = 8 * 60 * 1000;
 
@@ -49,7 +56,7 @@ module.exports = {
       result = await runChain({ startId: ids[0], length: 2, session: createSession(), ctx: { cfg, log, signal: abort.signal }, browser });
       const shot = await ctx.evidence(page, 'watch-end');
       signedIn = (await page.locator(S.signedOut).count()) === 0;
-      logo = shot.os ? await statsOnScreen(page, shot, LOGO) : null;
+      logo = shot.os ? await logoRedShare(page, shot.os) : null;
     } finally {
       clearTimeout(timer);
       clearInterval(watchdog);
@@ -73,10 +80,10 @@ module.exports = {
     if (lines.some(l => l.includes('[like] Liked'))) await ctx.check('watch.6', 'the video was liked', async () => true);
     else ctx.skip('watch.6', 'the video was liked', signedIn ? 'already liked' : 'signed out');
     await ctx.check('watch.7', 'no wall or fatal error ended the chain', async () => !['wall', 'browser', 'failures'].includes(result.reason));
-    if (logo) {
+    if (logo !== null && logo !== undefined) {
       await ctx.check('watch.9', 'the real screen shows YouTube\'s red logo where the page says it is (the app window is not covered)', async () => {
-        ctx.note('logo region mean:', JSON.stringify(logo.mean));
-        return logo.mean[0] > 150 && logo.mean[1] < 130 && logo.mean[2] < 130;
+        ctx.note('red share around the logo:', logo.toFixed(3));
+        return logo > 0.05;
       });
     }
 

@@ -16,7 +16,8 @@
   const duration = () => (s.mode === 'ad' ? ad().length : data.duration);
 
   const def = (name, get, set) => Object.defineProperty(video, name, { get, set: set || (v => log.push({ t: 'tamper', name, v })), configurable: true });
-  def('currentTime', current);
+  const t0 = performance.now();
+  def('currentTime', () => (data.staleCurrent != null && performance.now() - t0 < 400 ? data.staleCurrent : current()));
   def('duration', duration);
   def('paused', () => s.paused, () => {});
   def('ended', () => s.ended, () => {});
