@@ -13,7 +13,7 @@ lease_acquire "ytloop $script"
 
 job=$(cat << EOF
 cd ~/$REMOTE
-export YTLOOP_VM=1 PATH="\$HOME/tools/node/bin:\$HOME/tools/bin:\$PATH"
+export YTLOOP_VM=1 NODE_OPTIONS=--use-system-ca PATH="\$HOME/tools/node/bin:\$HOME/tools/bin:\$PATH"
 npm run $script -- $*
 EOF
 )

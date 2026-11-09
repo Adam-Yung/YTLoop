@@ -20,7 +20,7 @@ Throws on: tab closed, player never loaded (`startupTimeoutMs`), live video, ad 
 5. If an ad is showing: only track stall time, then loop. Content timing is ignored during ads.
 6. Content (first time `played`, see 7, is true): like the video once via `likeIfNeeded`. Never during ads.
 6b. Content: once the player is ready (`initialized`) and then every `autonavCheckMs`, make sure autoplay is off; return `ended`; press Play if paused (at most every 5 s); track progress.
-7. If not `last`, the owner is known, at least `min(5 s, duration / 2)` was played and 10 s or less remain: pick the first unvisited same-channel card and click it. Retries every `recommendationRetryMs` if none yet.
+7. If not `last`, the owner is known, at least `min(5 s, duration / 2)` was played and 10 s or less remain: pick the first unvisited same-channel card and click it. Retries every `recommendationRetryMs` if none yet. Each miss logs `[next] No unvisited same-channel card among N sidebar cards (S s left)`, so a fallback to the channel page can be explained from the log.
 
 `fresh` forces `page.goto` even if the URL already matches (used on retries). `last` disables the recommendation click, so the final video of a chain just plays to the end instead of navigating to a video that will not be watched.
 

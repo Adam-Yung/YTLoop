@@ -6,6 +6,12 @@
 lease_acquire "ytloop setup"
 "$ROOT/vm/sync.sh"
 
+CACHE=Library/Caches/ms-playwright
+if [ -d "$HOME/$CACHE" ]; then
+  vm_ssh "mkdir -p ~/Library/Caches"
+  rsync -a -e "ssh -o BatchMode=yes" "$HOME/$CACHE/" "$VM_SSH:$CACHE/"
+fi
+
 vm_ssh 'bash -s' << 'REMOTE_SCRIPT'
 set -euo pipefail
 T=$HOME/tools
@@ -32,8 +38,9 @@ if [ ! -x "$T/bin/yt-dlp" ]; then
 fi
 
 export PATH="$T/node/bin:$T/bin:$PATH"
+export NODE_OPTIONS=--use-system-ca
 cd "$HOME/ytloop"
-npm ci --no-audit --no-fund
+npm ci --no-audit --no-fund --ignore-scripts
 npx playwright install chromium
 defaults -currentHost write com.apple.screensaver idleTime 0
 echo "node $(node -v)  npm $(npm -v)  yt-dlp $(yt-dlp --version)"

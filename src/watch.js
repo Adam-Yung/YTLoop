@@ -96,7 +96,9 @@ async function watchVideo(page, id, session, ctx, { fresh = false, last = false 
     }
     if (!last && initialized && played && session.owner?.name && left >= 0 && left <= cfg.endWindowSeconds && now - lastRecoAt > cfg.recommendationRetryMs) {
       lastRecoAt = now;
-      const next = pickSame(await listRelated(page).catch(() => []), session.owner, session.visited, id);
+      const cards = await listRelated(page).catch(() => []);
+      const next = pickSame(cards, session.owner, session.visited, id);
+      if (!next) log.info(`[next] No unvisited same-channel card among ${cards.length} sidebar cards (${left.toFixed(0)} s left)`);
       if (next) {
         await followRelated(page, next, ctx);
         return { reason: 'recommended', nextId: next.id };

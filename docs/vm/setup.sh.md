@@ -4,7 +4,8 @@
 
 - Node 22 (latest v22 darwin-arm64 tarball from nodejs.org, checked against the published `SHASUMS256.txt`) in `~/tools/node`.
 - `yt-dlp_macos` (checked against the release `SHA2-256SUMS`) in `~/tools/bin/yt-dlp`.
-- `npm ci` and `npx playwright install chromium` in `~/ytloop`.
+- `npm ci --ignore-scripts` (the `prepare` hook only sets git hooks, and the VM has no git repo) and `npx playwright install chromium` in `~/ytloop`. If the host has a Playwright browser cache (`~/Library/Caches/ms-playwright`), it is copied to the VM first, so Playwright finds the browsers already installed and downloads nothing. This both moves the toolchain off the host (it can be deleted afterwards) and works when `cdn.playwright.dev` stalls behind the corporate proxy, as it did on 2026-11-08.
+- `NODE_OPTIONS=--use-system-ca`: the VM sits behind a TLS-inspecting proxy whose certificate is in the macOS keychain but not in Node's built-in list, so without this Node downloads fail with `SELF_SIGNED_CERT_IN_CHAIN`. Certificate checking stays on; never use `NODE_TLS_REJECT_UNAUTHORIZED=0`.
 - The VM screensaver idle time is set to 0 (never), so a run cannot be hidden by a screensaver. If the VM also locks the screen, turn off the lock and enable auto-login once in the VM's System Settings.
 
 ffmpeg is deliberately not installed; frame checks in `visual/` use periodic screenshots instead (decision 0008). Re-run after changing `package-lock.json` or to update Node and yt-dlp: delete `~/tools/node` or `~/tools/bin/yt-dlp` on the VM first to force a re-download.
