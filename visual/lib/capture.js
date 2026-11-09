@@ -79,13 +79,20 @@ async function elementOnScreen(page, png, selector) {
   return { x: origin.x, y: origin.y, w: box.width * scale, h: box.height * scale };
 }
 
-const APP_NAMES = { chromium: 'Google Chrome for Testing', chrome: 'Google Chrome' };
+const ACTIVATE = pid => `ObjC.import('AppKit'); $.NSRunningApplication.runningApplicationWithProcessIdentifier(${pid}).activateWithOptions(3)`;
 
-async function raiseWindow(page, channel) {
+async function browserPid(profileDir) {
+  const { stdout } = await run('ps', ['-axo', 'pid=,args=']);
+  const main = stdout.split('\n').find(l => l.includes(`--user-data-dir=${profileDir}`) && l.includes('.app/Contents/MacOS/') && !l.includes('--type='));
+  return main ? Number(main.trim().split(/\s+/)[0]) : null;
+}
+
+async function raiseWindow(page, cfg) {
   await page.bringToFront().catch(() => {});
   if (!supported) return;
   try {
-    await run('open', ['-a', APP_NAMES[channel] || APP_NAMES.chromium]);
+    const pid = await browserPid(cfg.profileDir);
+    if (pid) await run('osascript', ['-l', 'JavaScript', '-e', ACTIVATE(pid)]);
   } catch { /* Raising is best effort; the checks will say if the window is hidden. */ }
 }
 

@@ -7,9 +7,12 @@ const { createBrowser } = require('../../src/browser');
 const { fetchPlaylist } = require('../../src/playlist');
 const { createSession } = require('../../src/watch');
 const { runChain } = require('../../src/chain');
-const { capture, looksBlank } = require('../lib/ctx');
+const { capture, looksBlank, statsOnScreen } = require('../lib/ctx');
 const { screenState, wakeScreen, isAwake } = require('../lib/awake');
 const { regionStats } = require('../lib/regions');
+const S = require('../../src/youtube/selectors');
+
+const LOGO = 'ytd-masthead #logo-icon';
 
 const BUDGET_MS = 8 * 60 * 1000;
 
@@ -39,12 +42,14 @@ module.exports = {
       const state = await screenState();
       if (!isAwake(state)) { incidents.push(new Date().toISOString()); await wakeScreen(); }
     }, 15000);
-    let result;
+    let result, signedIn, logo;
     try {
       const page = await browser.page();
-      await capture.raiseWindow(page, cfg.browserChannel);
+      await capture.raiseWindow(page, cfg);
       result = await runChain({ startId: ids[0], length: 2, session: createSession(), ctx: { cfg, log, signal: abort.signal }, browser });
-      await ctx.evidence(page, 'watch-end');
+      const shot = await ctx.evidence(page, 'watch-end');
+      signedIn = (await page.locator(S.signedOut).count()) === 0;
+      logo = shot.os ? await statsOnScreen(page, shot, LOGO) : null;
     } finally {
       clearTimeout(timer);
       clearInterval(watchdog);
@@ -64,9 +69,16 @@ module.exports = {
     const skips = lines.filter(l => l.includes('[ad] Pressed Skip Ad')).length;
     if (skips) await ctx.check('watch.5', `ads were skipped by real clicks (${skips})`, async () => true);
     else ctx.skip('watch.5', 'a skippable ad was skipped', 'no skippable ad appeared in this run');
+    await ctx.check('watch.signin', 'the profile is signed in to YouTube (run npm run vm:login once)', async () => signedIn);
     if (lines.some(l => l.includes('[like] Liked'))) await ctx.check('watch.6', 'the video was liked', async () => true);
-    else ctx.skip('watch.6', 'the video was liked', 'not signed in or already liked');
+    else ctx.skip('watch.6', 'the video was liked', signedIn ? 'already liked' : 'signed out');
     await ctx.check('watch.7', 'no wall or fatal error ended the chain', async () => !['wall', 'browser', 'failures'].includes(result.reason));
+    if (logo) {
+      await ctx.check('watch.9', 'the real screen shows YouTube\'s red logo where the page says it is (the app window is not covered)', async () => {
+        ctx.note('logo region mean:', JSON.stringify(logo.mean));
+        return logo.mean[0] > 150 && logo.mean[1] < 130 && logo.mean[2] < 130;
+      });
+    }
 
     if (!capture.supported) return ctx.skip('watch.8', 'the screen samples show non-blank content', 'no screen capture on this platform');
     await ctx.check('watch.8', 'screen samples taken every 20 s show non-blank content', async () => {

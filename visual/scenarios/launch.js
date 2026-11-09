@@ -21,7 +21,7 @@ module.exports = {
       await page.goto(watch(ids.a1), { waitUntil: 'domcontentloaded' });
       return page.url().includes('watch') && (await page.title()) === 'Video a1';
     });
-    await capture.raiseWindow(page, ctx.cfg.browserChannel);
+    await capture.raiseWindow(page, ctx.cfg);
     await ctx.sleep(800);
     const shot = await ctx.evidence(page, 'launch');
     await ctx.check('launch.3', 'the page itself renders content (page screenshot is not blank)', async () => {

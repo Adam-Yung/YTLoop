@@ -16,3 +16,5 @@ Checks:
 | `probe.6` | after the app's own Play press (YouTube does not autoplay without a gesture) playback time advances |
 
 The Skip Ad button only exists during a skippable ad, so it is covered by the `watch` scenario when an ad appears. Evidence: `probe.page.png`, `probe.screen.png`, `probe-playing.*`.
+
+Before screen checks it raises the app's own browser window with `capture.raiseWindow(page, cfg)` (by process id, see `docs/visual/lib/capture.js.md`).

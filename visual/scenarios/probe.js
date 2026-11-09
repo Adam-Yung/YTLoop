@@ -37,7 +37,7 @@ module.exports = {
     try {
       await ctx.check('probe.3', 'the first playlist video loads (not about:blank)', async () => {
         await page.goto(watchUrl(ids[0]), { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await capture.raiseWindow(page, cfg.browserChannel);
+        await capture.raiseWindow(page, cfg);
         return page.url().includes('watch');
       });
       await ctx.sleep(6000);

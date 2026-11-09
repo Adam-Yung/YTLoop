@@ -17,7 +17,7 @@ module.exports = {
     const { page } = site;
     const skip = createSkipper({ cfg: { ...ctx.cfg, skipCooldownMs: 500 }, log: ctx.log, signal: new AbortController().signal });
     await page.goto(watch(ids.a1), { waitUntil: 'domcontentloaded' });
-    await capture.raiseWindow(page, ctx.cfg.browserChannel);
+    await capture.raiseWindow(page, ctx.cfg);
 
     await ctx.check('ads.1', 'an ad is playing and the real screen shows the red ad player', async () => {
       if (!(await ctx.until(async () => (await mediaState(page)).ad, 8000))) return false;

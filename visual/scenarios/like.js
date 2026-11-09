@@ -15,7 +15,7 @@ module.exports = {
     const { page } = site;
     const pctx = { cfg: ctx.cfg, log: ctx.log, signal: new AbortController().signal };
     await page.goto(watch(ids.a1), { waitUntil: 'domcontentloaded' });
-    await capture.raiseWindow(page, ctx.cfg.browserChannel);
+    await capture.raiseWindow(page, ctx.cfg);
 
     await ctx.check('like.1', 'an unliked video is liked and the button turns blue on the real screen', async () => {
       const before = await ctx.evidence(page, 'like-before');

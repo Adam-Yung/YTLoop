@@ -18,7 +18,7 @@ module.exports = {
     const rec = capture.startRecording(path.join(ctx.dir, 'chain.mov'));
     const sampler = capture.startSampler(path.join(ctx.dir, 'chain-samples'), 1500);
     await ctx.sleep(1000);
-    await capture.raiseWindow(page, cfg.browserChannel);
+    await capture.raiseWindow(page, cfg);
     const browser = { page: async () => page, close: async () => {} };
     const result = await runChain({ startId: ids.a1, length: 3, session: createSession(), ctx: { cfg, log: ctx.log, signal: new AbortController().signal }, browser });
     const samples = await sampler.stop();

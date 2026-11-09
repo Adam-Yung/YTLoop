@@ -47,4 +47,4 @@ Screen capture, recording and the mouse nudge are macOS only. On Windows and Ubu
 
 - Screen Recording permission for the process that runs the scripts (already granted to `sshd-keygen-wrapper` on prisma-vm).
 - Playwright Chromium, Node and yt-dlp from `npm run vm:setup`.
-- No ffmpeg and no Automation permission: samples use `sips`, and raising the window uses `open -a`, not System Events.
+- No ffmpeg and no Automation permission: samples use `sips`, and raising the window activates the browser process by pid (JXA `NSRunningApplication`), not System Events.
