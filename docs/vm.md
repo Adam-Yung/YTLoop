@@ -4,6 +4,7 @@
 npm run vm:setup     once: install Node, yt-dlp, deps and Chromium on the VM
 npm run vm:test      unit and fixture tests on the VM
 npm run vm:verify    real-screen checks against the fake YouTube
+npm run vm:login     once, with Chrome: sign in to YouTube in the profile the app uses (do it at the VM display)
 npm run vm:probe     real YouTube: page, selectors, playback
 npm run vm:watch     8 minute end-to-end run on real YouTube with a screen recording (background mode)
 npm run vm:start     the real app (background mode; Ctrl+C here does not stop it on the VM)

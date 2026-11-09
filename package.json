@@ -20,6 +20,7 @@
     "vm:verify": "bash vm/run.sh verify",
     "vm:probe": "bash vm/run.sh probe",
     "vm:watch": "bash vm/run.sh --bg verify:live watch",
+    "vm:login": "bash vm/run.sh --bg verify:live login",
     "vm:start": "bash vm/run.sh --bg start",
     "vm:fetch": "bash vm/fetch.sh"
   },

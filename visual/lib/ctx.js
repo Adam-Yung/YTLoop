@@ -24,6 +24,7 @@ async function until(fn, timeoutMs = 15000, stepMs = 100) {
 }
 
 function createContext({ dir, live, resultsFile }) {
+  loadEnvFile();
   fs.mkdirSync(dir, { recursive: true });
   const rows = [];
   const record = (id, status, name) => {
@@ -40,7 +41,7 @@ function createContext({ dir, live, resultsFile }) {
   };
   const skip = (id, name, why) => { console.log(`SKIP  ${id}  ${name} (${why})`); record(id, 'skip', name); };
   const log = createLog(path.join(dir, 'logs'));
-  const cfg = load({}, { profileDir: tmpDir('visual-profile'), logDir: path.join(dir, 'logs') });
+  const cfg = load(process.env, { profileDir: tmpDir('visual-profile'), logDir: path.join(dir, 'logs') });
 
   const evidence = async (page, name) => {
     const pw = path.join(dir, `${name}.page.png`);
