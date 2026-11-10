@@ -21,7 +21,7 @@ Use `<repo>/tmp/`, never `/tmp` or `os.tmpdir()`. Remove files when done. Tests 
 
 ## Testing
 
-- Pure logic: `unit` project. Browser behavior against fake YouTube pages: `fixture` project. Real YouTube: the `probe` and `watch` scenarios in `visual/`. All of it runs on the test VM (`npm run vm:test`, `vm:verify`, `vm:probe`), never on the developer Mac.
+- Pure logic: `unit` project. Browser behavior against fake YouTube pages: `fixture` project. Real YouTube: the `probe` and `watch` scenarios in `visual/`. All of it runs on the test VM during development (`npm run vm:test`, `vm:verify`, `vm:probe`), never on the developer Mac. The product itself (`npm start`) runs on users' own machines.
 - A bug fix starts with a failing test.
 - Fixtures cannot detect YouTube DOM changes. `npm run vm:probe` can.
 

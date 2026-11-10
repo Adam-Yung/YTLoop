@@ -8,8 +8,8 @@ Single place for settings. `load(env, overrides)` returns a config object; `load
 | --- | --- | --- |
 | `PLAYLIST_URL` | none, required | playlist passed to yt-dlp |
 | `CHAIN_MIN`, `CHAIN_MAX` | 10, 20 | videos per playlist entry is a random integer in this range; max is raised to min if lower |
-| `BROWSER_CHANNEL` | `chromium` | `chromium` (Playwright's own, install with `npm run setup`) or `chrome` (installed Google Chrome) |
-| `PROFILE_DIR` | `<repo>/.profile/<BROWSER_CHANNEL>` | dedicated browser profile |
+| `BROWSER_CHANNEL` | `chromium` | `chromium` (Playwright's own, installed by `npm run vm:setup`) or `chrome` (installed Google Chrome; what the test VM's `.env` sets, decision 0009) |
+| `PROFILE_DIR` | `<repo>/.profile/<BROWSER_CHANNEL>` | dedicated browser profile; the Chrome one is signed in with `npm run vm:login` |
 | `LOG_DIR` | `<repo>/logs` | holds `errors.log` |
 
 Obsolete: `BROWSER`, `WATCH_DURATION_BASE`, `WATCH_DURATION_VARIANCE` (see decision 0002).

@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Docs sync, style and VM-only runs
 
-- Run browsers, the app and tests only on the test VM via `npm run vm:*` (docs/vm.md). Never on the developer Mac; do not install browsers or project dependencies there. `npm run lint` is the only thing that runs on the Mac.
+- While developing, run browsers, tests and trial runs of the app only on the test VM via `npm run vm:*` (docs/vm.md). Never on the developer Mac; do not install browsers or project dependencies there. `npm run lint` is the only thing that runs on the Mac. (The product itself runs on users' own machines with `npm start`; this rule is about development.)
 - Docs mirror the code path: `src/a/b.js` is documented in `docs/src/a/b.js.md`.
 - Before editing a code file, read its mirrored doc. After editing, fix stale parts and add missing information in the same commit.
 - New code file needs a new doc. Deleted code file needs its doc deleted.

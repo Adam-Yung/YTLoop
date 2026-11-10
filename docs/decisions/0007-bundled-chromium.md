@@ -9,3 +9,5 @@ Decision:
 - Profiles are per channel: `.profile/chromium` and `.profile/chrome`.
 
 Consequences: supersedes the "system Chrome" part of decision 0001. Playwright's Chromium lacks Chrome's proprietary codecs; YouTube still plays through VP9, AV1 and Opus. Tests moved to the same browser and became stable.
+
+Update 2026-11-09: on the test VM the app now runs on that machine's unmanaged Chrome (`BROWSER_CHANNEL=chrome` in `.env`), see decision 0009. The default in the code stays Chromium, and admin-managed Chrome is still unsupported.

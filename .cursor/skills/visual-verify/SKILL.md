@@ -5,12 +5,12 @@ description: Run, extend or debug the real-screen verification for YTLoop on the
 
 # Visual verification
 
-Read `docs/visual.md` and `docs/vm.md` first. Everything runs on the test VM; the Mac only edits, lints and looks at fetched evidence.
+Read `docs/visual.md` and `docs/vm.md` first. Development checks run on the test VM (the product itself runs on users' own machines); the Mac only edits, lints and looks at fetched evidence.
 
 ## Run
 
 1. Make sure the VM is started (`/Applications/UTM.app/Contents/MacOS/utmctl list`; `start macOS` if stopped). Nobody should touch the VM display during a run.
-2. `npm run vm:verify` runs the fixture scenarios (launch, ads, like, chain), about a minute. `npm run vm:probe` checks the real YouTube DOM. `npm run vm:watch` plays real videos for several minutes.
+2. `npm run vm:verify` runs the fixture scenarios (launch, ads, like, chain), about a minute. `npm run vm:probe` checks the real YouTube DOM. `npm run vm:watch` plays real videos for several minutes and needs the signed-in profile (`npm run vm:login` once, at the VM display).
 3. Read the PASS/FAIL lines, then open the evidence copied to `tmp/vm-results/<latest>/`: `*.screen.png` is what the VM screen looked like. Look at the images before changing code. Delete `tmp/vm-results` when finished.
 4. A FAIL is a finding until proven a test bug. Reproduce by hand in a screenshot first.
 
@@ -25,8 +25,9 @@ Read `docs/visual.md` and `docs/vm.md` first. Everything runs on the test VM; th
 
 - Never run a browser, the tests or the app on the Mac: the npm scripts refuse without `YTLOOP_VM=1`.
 - Scratch files go in `<repo>/tmp/`, never `/tmp`. Delete them with the Delete tool, not chained `rm`.
-- Never use System Events/AppleScript (permission prompt). Raise the window with `open -a`.
-- Installed Google Chrome is admin-locked on managed Macs (remote debugging disallowed); use the default `BROWSER_CHANNEL=chromium`.
+- Never use System Events/AppleScript (permission prompt). The window is raised by activating the browser process by pid through JXA (`visual/lib/capture.js`), which needs no permission. Do not use `open -a "Google Chrome"`: it raises the person's own Chrome window.
+- The installed Chrome of a managed Mac is admin-locked (remote debugging disallowed). The VM's Chrome is not, and `.env` there sets `BROWSER_CHANNEL=chrome` (decision 0009); on a locked Chrome use `BROWSER_CHANNEL=chromium`.
+- A live `watch` passing is not proof: open the `watch-samples` and `watch-end.screen.png` and check it shows the app, signed in, playing.
 - A stale macOS permission dialog or notification banner can cover part of the screen and break a pixel check; take a screenshot and look.
 - The VM shares one screen with prisma-encryptor; the lease in `vm/lib.sh` serializes runs. If a lease looks stuck, check who holds it before breaking it.
 - The mapping from page boxes to screen pixels assumes the window is on display 1; `launch.4` proves it on the VM.

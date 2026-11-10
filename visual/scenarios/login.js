@@ -1,21 +1,10 @@
 'use strict';
 
-// One-time sign-in: opens plain Chrome (no automation, so Google accepts the login) on the app's profile, waits for it to be quit, then checks the session in the automated browser.
+// The VM version of `npm run login`: the same sign-in (scripts/login.js), then checks the session in the automated browser.
 
-const { spawn } = require('node:child_process');
 const S = require('../../src/youtube/selectors');
 const { launch } = require('../../src/browser');
-
-const LOGIN_URL = 'https://accounts.google.com/ServiceLogin?service=youtube&continue=https%3A%2F%2Fwww.youtube.com%2F';
-const KEYCHAIN_ARGS = ['--use-mock-keychain', '--password-store=basic'];
-const WAIT_MS = 15 * 60 * 1000;
-
-function openPlainChrome(profileDir) {
-  const child = spawn('open', ['-W', '-n', '-a', 'Google Chrome', '--args', `--user-data-dir=${profileDir}`, ...KEYCHAIN_ARGS, '--no-first-run', LOGIN_URL], { stdio: 'ignore' });
-  const done = new Promise(resolve => child.once('exit', resolve));
-  const timer = setTimeout(() => child.kill(), WAIT_MS);
-  return done.finally(() => clearTimeout(timer));
-}
+const { openPlainChrome, WAIT_MS } = require('../../scripts/login');
 
 module.exports = {
   name: 'login',

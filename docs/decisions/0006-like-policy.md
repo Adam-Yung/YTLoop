@@ -7,4 +7,4 @@ Safety rules:
 - A masthead sign-in link means signed out: skip, since the click would only open a sign-in dialog.
 - Real mouse input through `humanClick`, once per video, with a try per video only (no retries).
 
-Consequences: the Like selectors in `selectors.js` are unverified against live YouTube until `npm run probe` reports `likeButton` as ok. Liking every video is itself a recognizable pattern, which is a trade-off the operator accepts (see decision 0004).
+Consequences: the Like selectors in `selectors.js` were checked against live YouTube on 2026-11-09 (`npm run vm:probe` reports `likeButton` ok, and `vm:watch` and `vm:start` liked videos with a signed-in profile); `npm run vm:probe` is how to notice when YouTube changes them. Liking needs the one-time `npm run vm:login`. Liking every video is itself a recognizable pattern, which is a trade-off the operator accepts (see decision 0004).

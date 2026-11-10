@@ -8,7 +8,8 @@
   },
   "scripts": {
     "setup": "playwright install chromium",
-    "start": "node scripts/require-vm.js && node src/main.js",
+    "start": "node src/main.js",
+    "login": "node scripts/login.js",
     "probe": "node scripts/require-vm.js && node visual/run.js --live probe",
     "test": "node scripts/require-vm.js && playwright test --project=unit --project=fixture",
     "verify": "node scripts/require-vm.js && node visual/run.js",

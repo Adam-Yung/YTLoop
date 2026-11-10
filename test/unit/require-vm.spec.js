@@ -12,7 +12,7 @@ const run = env => spawnSync(process.execPath, [guard], { env: { PATH: process.e
 test('refuses to run without YTLOOP_VM', () => {
   const result = run({});
   expect(result.status).toBe(1);
-  expect(result.stderr).toContain('only runs on the test VM');
+    expect(result.stderr).toContain('run on the test VM');
 });
 
 test('refuses for any other value', () => {

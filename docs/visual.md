@@ -17,12 +17,12 @@ Two views of every check:
 1. The page view: Playwright's own screenshot and DOM state.
 2. The real screen: macOS `screencapture` of display 1 (and `screencapture -v` video, plus downscaled periodic samples), so what a person at the VM would see. The page's element boxes are mapped to screen pixels, and the pixel colors there are asserted (red ad player, yellow Skip button, blue Like button, dark player).
 
-A blank window passes the page view but fails the screen view. That is the bug that started this (decision 0007).
+A blank window passes the page view but fails the screen view. That is the bug that started this (decision 0007). The same applies to a window that is not blank but is hidden behind another one: with real Chrome the person's own Chrome shares the application name, which is why the app's window is raised by process id (decision 0009).
 
 ## Results
 
 - `visual/results/results.tsv` (on the VM, copied by `vm:fetch`): `check id`, `pass|fail|skip`, name.
-- `visual/results/<timestamp>/`: `*.page.png`, `*.screen.png`, `chain.mov`, `chain-samples/`, `watch-samples/`, `logs/errors.log`. Look at them when a check fails.
+- `visual/results/<timestamp>/`: `*.page.png`, `*.screen.png`, `chain.mov`, `watch.mov`, `chain-samples/`, `watch-samples/`, `logs/errors.log`. Look at them when a check fails, and look at the screenshots even when everything passed: a non-blank check alone cannot tell YouTube from a screensaver or another window on top.
 
 ## Scenarios
 
@@ -33,7 +33,8 @@ A blank window passes the page view but fails the screen view. That is the bug t
 | `like` | fixture | unliked gets liked (blue), no second click, already liked untouched |
 | `chain` | fixture | 3-video same-channel chain with a screen recording, samples checked for non-blank, changing content |
 | `probe` | live | real YouTube page loads, selectors match, player is visible, playback advances |
-| `watch` | live, manual | not run by default (`npm run vm:watch`): plays real videos for minutes and checks the screen and the ad and like paths when they occur |
+| `watch` | live, manual | not run by default (`npm run vm:watch`): the app's real chain for 2 videos on real YouTube with a recording; checks autoplay, the move to a second video, sign-in, ad skipping and liking when they occur, that the app's browser is the frontmost window, and non-blank samples |
+| `login` | live, manual | not run by default (`npm run vm:login`): one-time YouTube sign-in at the VM display (`BROWSER_CHANNEL=chrome` only) |
 
 ## Keeping the screen awake
 
@@ -46,5 +47,5 @@ Screen capture, recording and the mouse nudge are macOS only. On Windows and Ubu
 ## Needs (on the VM)
 
 - Screen Recording permission for the process that runs the scripts (already granted to `sshd-keygen-wrapper` on prisma-vm).
-- Playwright Chromium, Node and yt-dlp from `npm run vm:setup`.
+- Playwright's browser (Chromium; also used by the fixtures when the channel is `chromium`), Google Chrome for `BROWSER_CHANNEL=chrome`, Node and yt-dlp. `npm run vm:setup` installs everything except Chrome.
 - No ffmpeg and no Automation permission: samples use `sips`, and raising the window activates the browser process by pid (JXA `NSRunningApplication`), not System Events.

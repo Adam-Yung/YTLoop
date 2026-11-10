@@ -1,6 +1,6 @@
 # visual/scenarios/probe.js
 
-Live (`npm run probe`, about 15 s). Uses `.env` and the persistent live profile (`.profile/<channel>`), so a login you did once stays.
+Live (`npm run vm:probe`, about 15 s). Uses `.env` and the persistent live profile (`.profile/<channel>`), so a login you did once stays.
 
 Checks:
 
