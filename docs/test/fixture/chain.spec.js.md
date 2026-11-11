@@ -13,3 +13,5 @@ End-to-end tests of `watchVideo` and `runChain` on the fake site with scaled tim
 - Abort: chain returns `stopped` promptly.
 
 The fake site runs at `timeScale: 5` (1 s of video takes 200 ms; the 20 s videos last 4 s). Faster clocks made the last-10-seconds window shorter than one watch-loop iteration in real Chrome (each Play, autoplay and Like click costs a few hundred ms), so the recommendation was missed and the test fell back to the channel page about a third of the time.
+
+`YTLOOP_TEST_SLOW` (default 1) multiplies the stall, startup and navigation budgets (800 ms, 600 ms and 5 s). On the 2 CPU Windows VM a single slow page load looked like a stall, so the chain reloaded and `the last video of the chain is liked once` saw 9 visits instead of 3 about one run in two; `vm/windows/run.sh` sets it to 5 (decision 0010). The Mac VM leaves it unset and keeps the original budgets.

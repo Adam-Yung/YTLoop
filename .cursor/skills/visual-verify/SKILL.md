@@ -9,7 +9,7 @@ Read `docs/visual.md` and `docs/vm.md` first. Development checks run on the test
 
 ## Run
 
-1. Make sure the VM is started (`/Applications/UTM.app/Contents/MacOS/utmctl list`; `start macOS` if stopped). Nobody should touch the VM display during a run.
+1. Make sure the VM is started (macOS VM: `/Applications/UTM.app/Contents/MacOS/utmctl list`; `start macOS` if stopped; Windows VM: ssh must answer and the console must be logged in and unlocked). Nobody should touch the VM display during a run. The VM can be macOS or Windows; `vm/lib.sh` detects it (decision 0010) and the same commands work for both.
 2. `npm run vm:verify` runs the fixture scenarios (launch, ads, like, chain), about a minute. `npm run vm:probe` checks the real YouTube DOM. `npm run vm:watch` plays real videos for several minutes and needs the signed-in profile (`npm run vm:login` once, at the VM display).
 3. Read the PASS/FAIL lines, then open the evidence copied to `tmp/vm-results/<latest>/`: `*.screen.png` is what the VM screen looked like. Look at the images before changing code. Delete `tmp/vm-results` when finished.
 4. A FAIL is a finding until proven a test bug. Reproduce by hand in a screenshot first.
@@ -25,6 +25,7 @@ Read `docs/visual.md` and `docs/vm.md` first. Development checks run on the test
 
 - Never run a browser, the tests or the app on the Mac: the npm scripts refuse without `YTLOOP_VM=1`.
 - Scratch files go in `<repo>/tmp/`, never `/tmp`. Delete them with the Delete tool, not chained `rm`.
+- Windows VM: screenshots, recordings and window focus go through PowerShell (`visual/lib/win.js`) and ffmpeg; a run needs an unlocked console session, and a helper that keeps node alive makes a run hang after its last check. Disk is small, so empty old `visual\results` folders on the VM now and then.
 - Never use System Events/AppleScript (permission prompt). The window is raised by activating the browser process by pid through JXA (`visual/lib/capture.js`), which needs no permission. Do not use `open -a "Google Chrome"`: it raises the person's own Chrome window.
 - The installed Chrome of a managed Mac is admin-locked (remote debugging disallowed). The VM's Chrome is not, and `.env` there sets `BROWSER_CHANNEL=chrome` (decision 0009); on a locked Chrome use `BROWSER_CHANNEL=chromium`.
 - A live `watch` passing is not proof: open the `watch-samples` and `watch-end.screen.png` and check it shows the app, signed in, playing.

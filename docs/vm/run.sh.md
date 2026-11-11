@@ -2,6 +2,8 @@
 
 `vm/run.sh [--bg] <npm script> [args]` (the `npm run vm:*` scripts call it).
 
+On a Windows VM this dispatches to `vm/windows/run.sh` (`docs/vm/windows/run.sh.md`); the rest of this page is the macOS VM.
+
 1. Takes the shared VM lease (`vm/lib.sh`).
 2. `vm/sync.sh`.
 3. Runs `npm run <script>` on the VM as the console user in the GUI session, with `YTLOOP_VM=1` (this unlocks `scripts/require-vm.js`), `BROWSER_CHANNEL` from the host `.env` (default `chromium`; `chrome` uses the VM's Google Chrome, which is what the VM setup uses, decision 0009), `NODE_OPTIONS=--use-system-ca` (the VM's TLS-inspecting proxy, see `vm/setup.sh`) and `~/tools` on `PATH`.

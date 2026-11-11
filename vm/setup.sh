@@ -2,6 +2,7 @@
 # One-time (and idempotent) toolchain install on the VM, under ~/tools of the console user: Node, yt-dlp, npm deps, Playwright Chromium.
 # No Homebrew, no sudo, nothing outside the user's home. Downloads are verified against the publishers' checksums.
 . "$(dirname "$0")/lib.sh"
+use_windows_vm "$@"
 
 lease_acquire "ytloop setup"
 "$ROOT/vm/sync.sh"

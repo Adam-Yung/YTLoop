@@ -2,6 +2,7 @@
 # Runs an npm script of this repo on the VM, in the console user's GUI session, under the shared VM lease.
 # Usage: vm/run.sh [--bg] <npm script> [args]   (--bg detaches on the VM and polls its log, for runs longer than a few minutes)
 . "$(dirname "$0")/lib.sh"
+use_windows_vm "$@"
 
 background=0
 [ "${1:-}" = "--bg" ] && { background=1; shift; }

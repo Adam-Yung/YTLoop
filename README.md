@@ -81,7 +81,7 @@ A Chrome window opens and starts playing. Leave the window alone: the app uses t
 
 Developing and testing this project is done on a test VM, not on your own machine, because the tests and checks drive a real browser, the real mouse and the real screen (decision `docs/decisions/0008-run-on-vm.md`). Do this only if you are changing the code.
 
-- The Mac you edit on is the controller: edit, git, `npm run lint`, and the `npm run vm:*` commands. It needs no browser and no `node_modules`.
+- The machine you edit on (a Mac, or a Windows PC with Git Bash) is the controller: edit, git, `npm run lint`, and the `npm run vm:*` commands. It needs no browser and no `node_modules`. The VM can be macOS or Windows; the scripts detect which (decision 0010).
 - The VM runs everything else. Each `vm:*` command copies the working tree to `~/ytloop` on the VM, runs there in the logged-in desktop session, and copies the evidence back to `tmp/vm-results`.
 - `npm test`, `verify` and `probe` refuse to run without `YTLOOP_VM=1`, which only the VM scripts set. Never set it by hand on your own machine.
 
@@ -110,7 +110,7 @@ npm run vm:watch         # about 8 min end-to-end run with a screen recording
 | `npm run vm:probe` | acts on the VM | real YouTube: browser opens, selectors match, playback advances |
 | `npm run vm:watch` | acts on the VM | end-to-end run on real YouTube with a screen recording |
 | `npm run vm:start` | acts on the VM | the real app, on the VM (an end-to-end check) |
-| `npm run vm:fetch` | Mac | copy the VM's latest evidence into `tmp/vm-results` |
+| `npm run vm:fetch` | controller | copy the VM's latest evidence into `tmp/vm-results` |
 
 On a fresh clone also run `git config core.hooksPath .githooks` (the pre-commit hook; `npm install` does it too).
 

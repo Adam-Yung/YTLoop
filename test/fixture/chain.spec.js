@@ -18,7 +18,8 @@ const catalog = extra => ({
   [ids.a1]: vid('a1', 'a', extra.a1), [ids.a2]: vid('a2', 'a', extra.a2),
   [ids.a3]: vid('a3', 'a', extra.a3), [ids.a4]: vid('a4', 'a', extra.a4), [ids.z1]: vid('z1', 'z', extra.z1),
 });
-const cfg = { stallTimeoutMs: 800, startupTimeoutMs: 600, retryDelayMs: 50, botWaitMs: 400, wallCheckMs: 100, recommendationRetryMs: 100, navigationTimeoutMs: 5000 };
+const slow = Number(process.env.YTLOOP_TEST_SLOW) || 1;
+const cfg = { stallTimeoutMs: 800 * slow, startupTimeoutMs: 600 * slow, retryDelayMs: 50, botWaitMs: 400, wallCheckMs: 100, recommendationRetryMs: 100, navigationTimeoutMs: 5000 * slow };
 
 async function run({ context, page }, extra, { length = 3, start = ids.a1, setup, ctxExtra = {} } = {}) {
   const site = await createSite(context, { videos: catalog(extra), channels, timeScale: 5 });

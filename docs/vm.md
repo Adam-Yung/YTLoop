@@ -16,7 +16,17 @@ npm run lint         on the Mac: style and docs-mirror checks (read only)
 
 Set `VM_SSH` in `.env` to the ssh alias of the VM and `BROWSER_CHANNEL=chrome` to use the VM's Google Chrome (decision 0009). See decision 0008 for why everything runs on the VM, `docs/vm/*.md` for each script.
 
-## What the VM needs (once)
+## Windows VM
+
+The VM can also be Windows (decision 0010); the same `npm run vm:*` commands work, from Git Bash on a Windows host or from a Mac. Set `VM_SSH` to `user@address` (key login, no password). `vm/lib.sh` detects the VM type. Differences from the macOS VM:
+
+- Needs an active console session: log in at the VM display and keep it unlocked (`quser` must show `console ... Active`). Jobs run there as a scheduled task named `ytloop-run`.
+- `vm:setup` installs Node, yt-dlp, ffmpeg, MinGit and Playwright's Chromium under `C:\Users\<user>\tools` with no admin rights. Chrome is not installed; `BROWSER_CHANNEL=chrome` in `.env` falls back to Chromium on a VM without Chrome.
+- The working copy is `C:\Users\<user>\ytloop`; stop a stuck run with `schtasks /End /TN ytloop-run` and `taskkill` of its `node.exe` on the VM.
+- Disk is tight on a small VM: setup empties its own download cache, and `tmp\` and `visual\results` on the VM grow with every run (screen recordings); delete old run folders there when space runs low.
+- Details: `docs/vm/windows/*.md`.
+
+## What the macOS VM needs (once)
 
 1. **Reachable over ssh without a password.** An alias in the Mac's `~/.ssh/config` with key login. The scripts use `ssh -o BatchMode=yes -o ConnectTimeout=10`, so a dead VM fails in 10 s instead of hanging.
 2. **Passwordless sudo for the ssh user.** The browser and `screencapture` only work inside the logged-in desktop session, so scripts run as the console user with `sudo launchctl asuser <uid> sudo -u <user>` (`vm/lib.sh`).
@@ -24,9 +34,11 @@ Set `VM_SSH` in `.env` to the ssh alias of the VM and `BROWSER_CHANNEL=chrome` t
 4. **Screen Recording permission** for the process that runs the scripts (granted to `sshd-keygen-wrapper` on prisma-vm).
 5. **Google Chrome installed** and not admin-managed (no "DevTools remote debugging is disallowed" policy). Without Chrome, set `BROWSER_CHANNEL=chromium` and the app uses Playwright's Chromium.
 
-Start a powered-off VM with `/Applications/UTM.app/Contents/MacOS/utmctl start macOS` (if UTM does not list it, open the `.utm` bundle once).
+Start a powered-off macOS VM with `/Applications/UTM.app/Contents/MacOS/utmctl start macOS` (if UTM does not list it, open the `.utm` bundle once).
 
 ## First run
+
+(macOS VM; for a Windows VM see above, and skip steps 2 to 4 that mention Chrome and the keychain: use Chromium and sign in at the VM display if likes are needed.)
 
 1. `cp .env.example .env`; set `PLAYLIST_URL`, `VM_SSH`, `BROWSER_CHANNEL=chrome`.
 2. `npm run vm:setup`.

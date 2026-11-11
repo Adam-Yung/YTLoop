@@ -1,6 +1,6 @@
 # visual/lib/awake.js
 
-Keeps the Mac awake and the screen visible. The owner's screensaver starts after 15 minutes and cannot be changed.
+Keeps the machine (macOS or Windows) awake and the screen visible. The text below describes macOS; the Windows equivalents are in the last section. The owner's screensaver starts after 15 minutes and cannot be changed.
 
 - `startAwake(intervalMs = 45000)` returns `{ stop() }`: `caffeinate -d -i -u` plus a 1 px mouse nudge and back every 45 s through `CGEventPost` (JXA via `osascript`). Checked: `HIDIdleTime` goes from seconds to 0.1 s after a nudge. No-op on other platforms.
 - `screenState()` returns `{ saver, locked }`: `saver` is true when `ScreenSaverEngine` is running; `locked` reads `CGSSessionScreenIsLocked` from the IO registry.
@@ -8,3 +8,7 @@ Keeps the Mac awake and the screen visible. The owner's screensaver starts after
 - `isAwake(state)`: no saver and not locked.
 
 Why it exists: a live run recorded a 5 minute video of the macOS screensaver (a lake photo) instead of YouTube, and every "non-blank" check passed because the screensaver is a colorful image. `visual/run.js` now wakes the screen first and checks `screen.1`, and after each scenario checks `<scenario>.screen`.
+
+## Windows
+
+The same four functions, through `win.js`: `startAwake` sets `SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED | ES_SYSTEM_REQUIRED)` and nudges the mouse every 45 s (`mouse_event`); `screenState` reads `saver` from running `.scr` processes and `locked` from `OpenInputDesktop`; `wakeScreen` kills a running screensaver and nudges, up to 5 times, and never tries to unlock.

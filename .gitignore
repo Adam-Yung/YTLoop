@@ -9,3 +9,5 @@ playwright-report/
 .profile-live/
 visual/results/
 tmp/
+.env.*
+!.env.example

@@ -7,9 +7,20 @@ ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 : "${VM_SSH:?Set VM_SSH in .env to the ssh alias of the test VM}"
 
 REMOTE=ytloop
-LEASE_DIR=${PRISMA_VM_LEASE_DIR:-/tmp/prisma-vm-lease}
+case "$(uname -s)" in
+  MINGW* | MSYS* | CYGWIN*) DEFAULT_LEASE_DIR=$ROOT/tmp/vm-lease ;;
+  *) DEFAULT_LEASE_DIR=/tmp/prisma-vm-lease ;;
+esac
+LEASE_DIR=${PRISMA_VM_LEASE_DIR:-$DEFAULT_LEASE_DIR}
+mkdir -p "$(dirname "$LEASE_DIR")"
 
-vm_ssh() { ssh -o BatchMode=yes -o ConnectTimeout=10 "$VM_SSH" "$@"; }
+vm_ssh() { ssh -o BatchMode=yes -o ConnectTimeout=10 -o ServerAliveInterval=15 -o LogLevel=ERROR "$VM_SSH" "$@"; }
+
+if [ -z "${VM_OS:-}" ]; then
+  [ "$(vm_ssh uname -s 2> /dev/null || true)" = Darwin ] && VM_OS=mac || VM_OS=windows
+  export VM_OS
+fi
+use_windows_vm() { [ "$VM_OS" = windows ] && exec bash "$ROOT/vm/windows/$(basename "$0")" "$@"; return 0; }
 
 as_console_user() {
   vm_ssh 'u=$(stat -f%Su /dev/console); sudo launchctl asuser "$(id -u "$u")" sudo -u "$u" -H bash -s'

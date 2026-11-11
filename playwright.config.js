@@ -10,7 +10,8 @@ const chrome = { ...channel, headless: !process.env.HEADED };
 module.exports = defineConfig({
   timeout: 30000,
   fullyParallel: true,
-  workers: 3,
+  workers: Number(process.env.YTLOOP_WORKERS) || 3,
+  retries: Number(process.env.YTLOOP_RETRIES) || 0,
   reporter: [['list']],
   projects: [
     { name: 'unit', testDir: 'test/unit' },

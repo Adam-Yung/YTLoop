@@ -9,7 +9,7 @@ Defines two test projects (`npm test` runs both):
 
 Real-screen checks and live YouTube checks are not Playwright Test projects; they are the scenarios in `visual/` (`docs/visual.md`).
 
-Set `HEADED=1` to watch fixture tests in a visible browser. Tests run in parallel with 3 workers (`workers: 3`).
+Set `HEADED=1` to watch fixture tests in a visible browser. Tests run in parallel with 3 workers by default; `YTLOOP_WORKERS` overrides it (`workers: Number(process.env.YTLOOP_WORKERS) || 3`). `vm/windows/run.sh` sets it to 1, because the Windows VM has 2 CPUs and 4 GB: with 3 workers `site.spec.js` (Skip Ad click) and `chain.spec.js` (liked once) timed out, and both pass with 1. `YTLOOP_RETRIES` (default 0) sets Playwright's `retries`; `vm/windows/run.sh` sets it to 1 because the first fixture test of a run (a cold Chromium start on a VM that also runs Box, Dropbox and Prisma agents) failed about one run in three even with 1 worker and 5x budgets. A retried test passes as "flaky" in the report, it is not hidden; the Mac VM keeps 0.
 
 ## Stability
 

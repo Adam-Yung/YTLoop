@@ -1,33 +1,52 @@
 'use strict';
 
-// Real-screen evidence on macOS: screenshots, screen recordings, window geometry, raising the window. Other platforms report unsupported.
+// Real-screen evidence on macOS and Windows: screenshots, screen recordings, window geometry, raising the window. Other platforms report unsupported.
 
 const { execFile, spawn } = require('node:child_process');
 const { promisify } = require('node:util');
 const fs = require('node:fs');
+const os = require('node:os');
 const path = require('node:path');
 const { decode } = require('./png');
+const win = require('./win');
 
 const run = promisify(execFile);
-const supported = process.platform === 'darwin';
+const windows = process.platform === 'win32';
+const supported = process.platform === 'darwin' || windows;
 
-async function screenshot(file) {
+async function screenshot(file, width = 0) {
   if (!supported) return false;
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  await run('screencapture', ['-x', '-D', '1', file]);
+  if (windows) await win.call(`Shot ${win.quote(file)} ${width}`);
+  else {
+    await run('screencapture', ['-x', '-D', '1', file]);
+    if (width) await run('sips', ['--resampleWidth', String(width), file]);
+  }
   return fs.existsSync(file);
 }
+
+function ffmpegPath() {
+  const own = process.env.YTLOOP_FFMPEG || path.join(os.homedir(), 'tools', 'bin', 'ffmpeg.exe');
+  return fs.existsSync(own) ? own : 'ffmpeg';
+}
+
+const RECORDERS = {
+  darwin: file => spawn('screencapture', ['-v', '-x', '-D', '1', file], { stdio: 'ignore' }),
+  win32: file => spawn(ffmpegPath(), ['-y', '-loglevel', 'error', '-f', 'gdigrab', '-framerate', '10', '-i', 'desktop', '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2', '-c:v', 'libx264', '-preset', 'ultrafast', '-pix_fmt', 'yuv420p', file], { stdio: ['pipe', 'ignore', 'ignore'], windowsHide: true }),
+};
 
 function startRecording(file) {
   if (!supported) return { stop: async () => false };
   fs.mkdirSync(path.dirname(file), { recursive: true });
-  const child = spawn('screencapture', ['-v', '-x', '-D', '1', file], { stdio: 'ignore' });
-  const exited = new Promise(resolve => child.once('exit', resolve));
+  const child = RECORDERS[process.platform](file);
+  const exited = new Promise(resolve => { child.once('exit', resolve); child.once('error', resolve); });
   return {
     stop: async () => {
-      child.kill('SIGINT');
+      if (windows) child.stdin?.end('q');
+      else child.kill('SIGINT');
       await Promise.race([exited, new Promise(r => setTimeout(r, 8000))]);
-      return fs.existsSync(file);
+      if (child.exitCode === null) child.kill();
+      return fs.existsSync(file) && fs.statSync(file).size > 0;
     },
   };
 }
@@ -41,10 +60,7 @@ function startSampler(dir, everyMs) {
     busy = true;
     const file = path.join(dir, `sample_${String(files.length + 1).padStart(3, '0')}.png`);
     try {
-      if (await screenshot(file)) {
-        await run('sips', ['--resampleWidth', '640', file]);
-        files.push(file);
-      }
+      if (await screenshot(file, 640)) files.push(file);
     } catch { /* A missed sample is fine; the checks require most of them. */ }
     busy = false;
   }, everyMs);
@@ -82,6 +98,10 @@ async function elementOnScreen(page, png, selector) {
 const ACTIVATE = pid => `ObjC.import('AppKit'); $.NSRunningApplication.runningApplicationWithProcessIdentifier(${pid}).activateWithOptions(3)`;
 
 async function browserPid(profileDir) {
+  if (windows) {
+    const pid = Number(await win.call(`BrowserPid ${win.quote(profileDir)}`));
+    return pid || null;
+  }
   const { stdout } = await run('ps', ['-axo', 'pid=,args=']);
   const main = stdout.split('\n').find(l => l.includes(`--user-data-dir=${profileDir}`) && l.includes('.app/Contents/MacOS/') && !l.includes('--type='));
   return main ? Number(main.trim().split(/\s+/)[0]) : null;
@@ -92,7 +112,9 @@ async function raiseWindow(page, cfg) {
   if (!supported) return;
   try {
     const pid = await browserPid(cfg.profileDir);
-    if (pid) await run('osascript', ['-l', 'JavaScript', '-e', ACTIVATE(pid)]);
+    if (!pid) return;
+    if (windows) await win.call(`Raise ${pid}`);
+    else await run('osascript', ['-l', 'JavaScript', '-e', ACTIVATE(pid)]);
   } catch { /* Raising is best effort; the checks will say if the window is hidden. */ }
 }
 
@@ -101,8 +123,8 @@ const FRONT = `ObjC.import('AppKit'); $.NSWorkspace.sharedWorkspace.frontmostApp
 async function isFrontmost(cfg) {
   if (!supported) return true;
   const pid = await browserPid(cfg.profileDir);
-  const { stdout } = await run('osascript', ['-l', 'JavaScript', '-e', FRONT]);
-  return pid !== null && Number(stdout) === pid;
+  const front = windows ? await win.call('FrontPid') : (await run('osascript', ['-l', 'JavaScript', '-e', FRONT])).stdout;
+  return pid !== null && Number(front) === pid;
 }
 
 const readPng = file => decode(fs.readFileSync(file));

@@ -1,5 +1,7 @@
 # vm/setup.sh
 
+On a Windows VM this dispatches to `vm/windows/setup.sh` (`docs/vm/windows/setup.sh.md`); the rest of this page is the macOS VM.
+
 `npm run vm:setup`. Idempotent install of the toolchain on the VM, entirely under the console user's home (nothing system-wide, no Homebrew, no sudo), so the shared VM and prisma-encryptor are not affected:
 
 - Node 22 (latest v22 darwin-arm64 tarball from nodejs.org, checked against the published `SHASUMS256.txt`) in `~/tools/node`.

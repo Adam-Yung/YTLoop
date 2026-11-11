@@ -28,7 +28,7 @@ async function main() {
   const resultsFile = path.join(RESULTS, 'results.tsv');
   const ctx = createContext({ dir, live, resultsFile });
   console.log(`visual run: ${chosen.map(s => s.name).join(', ')}  evidence: ${dir}`);
-  if (!capture.supported) console.log('NOTE  real-screen capture is macOS only here; screen checks are skipped');
+  if (!capture.supported) console.log('NOTE  real-screen capture needs macOS or Windows; screen checks are skipped');
 
   const awake = startAwake();
   const woke = await wakeScreen();
